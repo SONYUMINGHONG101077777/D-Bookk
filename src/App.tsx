@@ -2,11 +2,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { BOOKS } from "./mock/books";
 import TOC from "./components/TOC";
-import Reader from "./components/Reader";
 import { useReaderStore } from "./store/readerStore";
+import Reader from "./components/Reader";
 
 const App = () => {
-  const book = BOOKS[0]; // single book for now
+  const book = BOOKS[0]; 
   const currentBookId = useReaderStore((s) => s.currentBookId);
   const currentChapterId = useReaderStore((s) => s.currentChapterId);
   const setCurrent = useReaderStore((s) => s.setCurrent);
@@ -81,13 +81,8 @@ const App = () => {
         />
       )}
 
-      {/* Reader */}
       <div className="flex-1 min-w-0">
-        <Reader
-          book={book}
-          chapterId={shownChapterId}
-          onOpenToc={() => setTocOpen(true)}
-        />
+        <Reader book={book} chapterId={shownChapterId} onOpenToc={() => setTocOpen(true)}/>
       </div>
     </div>
   );

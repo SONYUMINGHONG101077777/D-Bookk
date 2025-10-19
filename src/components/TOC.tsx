@@ -31,7 +31,6 @@ export default function TOC({
         </button>
       </div>
 
-      {/* Desktop header */}
       <h2 className="m-0 hidden text-lg font-bold sm:text-xl md:block">
         {book.title}
       </h2>
