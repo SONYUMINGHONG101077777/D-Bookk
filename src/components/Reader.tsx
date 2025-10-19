@@ -185,7 +185,7 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
         <div className="flex items-center gap-3">
           <button
             onClick={onOpenToc}
-            className="md:hidden inline-flex items-center justify-center rounded-lg border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50"
+            className="md:hidden inline-flex text items-center justify-center rounded-lg border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50"
             aria-label="menu"
           >
             ☰
