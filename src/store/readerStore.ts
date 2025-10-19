@@ -33,13 +33,19 @@ type ReaderState = {
 
   getLocation: (bookId: string, chapterId: string) => Location | null;
 
-  continueBook: (bookId: string, fallbackChapterId: string) => {
+  continueBook: (
+    bookId: string,
+    fallbackChapterId: string
+  ) => {
     chapterId: string;
     page: number;
     scrollTop: number;
   };
 
   clearProgress: (bookId?: string) => void;
+
+  fontSize: number;
+  setFontSize: (size: number) => void;
 };
 
 export const useReaderStore = create<ReaderState>()(
@@ -202,6 +208,8 @@ export const useReaderStore = create<ReaderState>()(
 
           return { locations: next, currentPosition: resetCurrent };
         }),
+      fontSize: 16,
+      setFontSize: (n: number) => set({ fontSize: n }),
     }),
     {
       name: "reader-progress",

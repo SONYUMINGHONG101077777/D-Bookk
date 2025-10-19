@@ -80,6 +80,8 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
   const getLocation = useReaderStore((s) => s.getLocation);
   const setCurrent = useReaderStore((s) => s.setCurrent);
 
+  const fontSize = useReaderStore(s => s.fontSize)
+
   const chapter: Chapter | undefined = useMemo(
     () => book.chapters.find((c) => c.id === chapterId),
     [book.chapters, chapterId]
@@ -97,7 +99,6 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
   const [pageInput, setPageInput] = useState<string>(String(initialSavedPage + 1));
   const restoredOnce = useRef(false);
 
-  // mark current book/chapter
   useEffect(() => {
     if (chapter) setCurrent(book.id, chapter.id);
   }, [book.id, chapter?.id, setCurrent]);
@@ -177,8 +178,7 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
     setPageInput(String(clamped));
     containerRef.current?.scrollTo({ top: 0 });
     setIsEditing(false);
-  };
-
+  }; 
   return (
     <section className="flex h-screen flex-col overflow-hidden">
       <header className="sticky top-0 z-20 bg-white/90 backdrop-blur border-b border-slate-200 px-3 py-3 sm:px-6">
@@ -239,7 +239,6 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
         </div>
       </header>
 
-      {/* Content (UI unchanged) */}
       <div
         ref={containerRef}
         className="flex-1 overflow-y-auto bg-slate-50 px-4 py-5 sm:px-6 md:px-10"
@@ -253,7 +252,7 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
           }}
         >
           {currentPageContent.map((segment, i) => (
-            <p key={i} className="mb-5 text-slate-900">
+            <p key={i} className={`mb-5 text-slate-900`} style={{ fontSize: `${fontSize}px` }}>
               {segment}
             </p>
           ))}
