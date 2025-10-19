@@ -192,7 +192,7 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
           </button>
           <div className="min-w-0 flex-1">
             <div className="text-xs sm:text-sm text-slate-500 truncate">{book.title}</div>
-            <h1 className="mt-0.5 text-base font-semibold sm:text-xl truncate">{chapter.title}</h1>
+            <h1 className="mt-0.5 text-base font-semibold sm:text-xl truncate text">{chapter.title}</h1>
           </div>
           <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700">
             <span onClick={() => setIsEditing((v) => !v)}>

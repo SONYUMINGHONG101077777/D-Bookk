@@ -87,12 +87,12 @@ export const FontSizeController = () => {
         >
           <div className="relative w-full h-1 rounded-full bg-slate-200">
             <div
-              className="absolute left-0 top-0 h-full rounded-full bg-gray-500"
+              className="absolute left-0 top-0 h-full rounded-full bg-gray-500 card"
               style={{ width: `${pct * 100}%` }}
             />
             <button
               type="button"
-              className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 size-3 rounded-full bg-white border border-slate-300 shadow hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 size-3 rounded-full  bg-white border border-slate-300 shadow hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               style={{ left: `${pct * 100}%` }}
               onMouseDown={(e) => {
                 e.stopPropagation();
@@ -114,7 +114,7 @@ export const FontSizeController = () => {
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="text-center space-y-3">
               <div className="text-xs font-semibold text-slate-500">ទំហំអក្សរ</div>
-              <div className="text-xs font-bold">{fontSize}px</div>
+              <div className="text-xs font-bold text">{fontSize}px</div>
             </div>
           </div>
         </div>
