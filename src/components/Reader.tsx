@@ -85,7 +85,6 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
     [book.chapters, chapterId]
   );
 
-  // --- INIT FROM SAVED PAGE (no flicker to page 1) ---
   const initialSavedPage = useMemo(() => {
     if (!chapter) return 0;
     const saved = getLocation(book.id, chapter.id);
@@ -103,7 +102,6 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
     if (chapter) setCurrent(book.id, chapter.id);
   }, [book.id, chapter?.id, setCurrent]);
 
-  // Build pages deterministically (not viewport-based)
   const recomputePages = useCallback(() => {
     if (!chapter) {
       setPages([]);
@@ -120,12 +118,10 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
     recomputePages();
   }, [recomputePages]);
 
-  // When chapter changes, allow restoring again
   useEffect(() => {
     restoredOnce.current = false;
   }, [book.id, chapterId]);
 
-  // Restore saved page after pages computed (clamp only; never reset to 0)
   useEffect(() => {
     if (!chapter || restoredOnce.current || pages.length === 0) return;
     const saved = getLocation(book.id, chapter.id);
@@ -136,18 +132,15 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
     containerRef.current?.scrollTo({ top: 0 });
   }, [book.id, chapter?.id, pages.length, getLocation, initialSavedPage]);
 
-  // Keep input synced to current page
   useEffect(() => {
     setPageInput(String(pageIdx + 1));
   }, [pageIdx]);
 
-  // Persist current page index
   useEffect(() => {
     if (!chapter) return;
     savePage(book.id, chapter.id, pageIdx);
   }, [book.id, chapter?.id, pageIdx, savePage]);
 
-  // Attach scroll listener only AFTER restore completes (prevents early overwrite)
   useEffect(() => {
     const el = containerRef.current;
     if (!el || !chapter || !restoredOnce.current) return;
@@ -238,7 +231,7 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
                   type="submit"
                   className="rounded-md border border-slate-300 bg-slate-100 px-3 py-1.5 text-sm hover:bg-slate-200"
                 >
-                  Go
+                  ទៅ
                 </button>
               </form>
             )}

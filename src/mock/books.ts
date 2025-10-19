@@ -22,8 +22,8 @@ export const BOOKS: Book[] = [
         title: "ភិក្ខុវិន័យ — កថាខណៈ",
         content: [
           `សម័យមួយ ព្រះពុទ្ធជាម្ចាស់បន្ទាប់ពីបានបង្ហាញធម៌នៅទីក្រុងរាជគក្ខ្សិ សម្បូរទៅដោយភិក្ខុសិស្សជាច្រើន  Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis minus iste, dolores rem sed doloribus deserunt nisi sit, in alias amet dolor, facere sint iusto. Iure sequi commodi a? Recusandae.
-    Labore quis cum laborum similique, ea in soluta magnam nam voluptas impedit reprehenderit pariatur tempore accusantium blanditiis velit ex totam molestiae, modi quibusdam natus dolores officia voluptate. Odit, deleniti assumenda!
-    Magnam eius illum cumque animi obcaecati error porro praesentium repellendus cum atque vitae consequuntur ad, ipsa ipsam sint distinctio itaque corporis ut voluptates exercitationem recusandae iste! Ipsa fugiat doloribus a.
+      Labore quis cum laborum similique, ea in soluta magnam nam voluptas impedit reprehenderit pariatur tempore accusantium blanditiis velit ex totam molestiae, modi quibusdam natus dolores officia voluptate. Odit, deleniti assumenda!
+      Magnam eius illum cumque animi obcaecati error porro praesentium repellendus cum atque vitae consequuntur ad, ipsa ipsam sint distinctio itaque corporis ut voluptates exercitationem recusandae iste! Ipsa fugiat doloribus a.
     Aliquam, error eaque facilis quam esse, quidem voluptates quod quo similique facere laudantium hic repellat temporibus dignissimos harum commodi illo nostrum ut maiores dolor debitis consequatur deleniti. Aliquid, sint? Corporis!
     Officia, dicta maxime. Illo pariatur ex iusto numquam vel sapiente aliquid est, dolor et accusantium culpa. Assumenda error vitae omnis necessitatibus esse, ipsa animi quis velit nemo consequatur pariatur eaque?
     Recusandae laborum sapiente doloremque facilis illo sed doloribus aut, voluptates ex beatae dolorem enim aliquam ullam, quas, quod eos quaerat voluptas et dolorum. Voluptate facilis reiciendis totam fuga voluptas mollitia!
@@ -943,94 +943,87 @@ export const BOOKS: Book[] = [
     Provident qui atque quaerat optio nemo quasi labore velit ratione quia nobis, delectus officia quisquam repudiandae dolorum odit non voluptatem aperiam mollitia esse inventore alias fugit. Hic incidunt ex voluptate.
     Saepe quas deleniti ratione, nesciunt officia quia, sapiente mollitia vero id maiores placeat distinctio quam, nihil earum debitis ea? Mollitia obcaecati quos minima error at sapiente porro deserunt laboriosam molestiae.
     Optio amet eaque qui officia in illum perferendis maxime! Sapiente maiores unde id nulla labore eos alias neque earum quos amet consequuntur obcaecati magni dolorem, dignissimos molestiae consequatur. Fugit, repellat?
-    Sunt vitae corporis adipisci repudiandae ab. Alias ab mollitia delectus officiis saepe nam unde doloribus quas recusandae iste, deleniti natus at ut, qui odio ea atque voluptatem laborum dolorum quis?
-    Fuga pariatur repudiandae sint recusandae voluptas sunt itaque facere eaque earum quibusdam consequuntur aperiam tempore in odio, at rerum sequi aspernatur, veniam fugit, et vitae iusto nihil possimus. Quas, modi.
-    Exercitationem, accusantium rem corporis nostrum et, velit possimus recusandae, distinctio totam laborum molestias quae deserunt fugiat quod nihil tempora? Itaque incidunt quae quos porro? Aperiam, magni excepturi! Sapiente, numquam suscipit!
-    Reprehenderit asperiores nesciunt officia molestias quod recusandae sint iure ea consectetur earum natus excepturi alias repellendus eveniet, cum optio accusamus nobis facilis velit. Accusamus, nemo placeat unde dolores similique tempore.
-    Reiciendis maiores numquam pariatur possimus voluptas rerum sed modi facere velit saepe voluptatum, nam veritatis aliquam quia minus. Enim, saepe. Possimus laboriosam illo voluptatem mollitia quos itaque veniam eaque cupiditate.
-    Doloremque excepturi a laudantium atque tempora error sapiente, nesciunt nisi! Officiis, suscipit? Aliquam repellendus facere omnis earum provident eveniet, cum in odit temporibus repellat ab laboriosam eum eos totam quod.
-    Repellat ipsum voluptates ex unde repellendus ipsa corrupti quaerat eaque et, possimus rem commodi voluptas voluptatum voluptatem nobis, quisquam molestiae distinctio neque. Delectus iusto eum explicabo doloribus deserunt, veritatis odio.
-    Molestias modi adipisci ut? Dolorum assumenda, iste asperiores dicta nobis dolores laboriosam nihil deserunt ratione quo? Delectus perspiciatis fugit eos error, porro, praesentium magni officiis eligendi nihil, laboriosam dolore quia.
-    Quisquam libero nihil sint temporibus, quis et! Asperiores, itaque voluptatum quam ab sequi quo exercitationem hic laboriosam ut nesciunt! Obcaecati maxime rem illum ab distinctio a quisquam, assumenda praesentium atque.
-    Dolor enim ab aperiam quos atque sed itaque corporis molestiae, provident neque ratione quasi culpa, perspiciatis voluptas deleniti autem voluptatibus maxime. Unde voluptates sed laboriosam magni quidem accusamus impedit fugit.
-    Tenetur fugit blanditiis nihil magni rerum, enim quisquam perspiciatis suscipit praesentium error reiciendis quas, id ipsa vel iusto in aut temporibus veritatis doloribus accusamus illum reprehenderit commodi. Pariatur, suscipit provident?
-    Delectus voluptates maiores maxime facilis dolorem? Facere mollitia minus illum autem id nihil blanditiis possimus enim consequatur accusantium? Placeat velit tempora adipisci hic dicta similique, quisquam dolor distinctio sed! Saepe.
-    Delectus, iusto! Veritatis magni saepe perferendis ex numquam accusantium autem, vitae dolore ab porro perspiciatis rerum, aliquid labore, voluptas qui quis molestiae! Sit iure aperiam eos voluptates illo vero explicabo.
-    Voluptatem est ipsam quos id soluta cupiditate laboriosam, error aspernatur beatae. Ex error recusandae corporis illo distinctio beatae facilis blanditiis minima tenetur at itaque, laboriosam quo alias veniam excepturi asperiores!
-    In quae ullam fuga error. Unde excepturi culpa fugiat incidunt quia cumque molestiae commodi. Voluptatum vel aperiam dicta consequatur iure quasi ullam mollitia voluptatem! Non minus reprehenderit itaque sit ullam.
-    Itaque, ipsam. Aliquam, ipsa, eos cumque illo recusandae dolores reiciendis aperiam ullam placeat nostrum eius quibusdam explicabo consequuntur praesentium vero quaerat ad quod accusamus consectetur maxime quo. Vero, architecto fuga.
-    Quo enim tenetur maiores cum ipsum nulla consequatur porro sequi ea exercitationem soluta pariatur omnis qui ipsa molestiae nihil provident at modi ducimus, doloribus numquam? Ex dolor dolorum ut soluta.
-    Voluptatum, fugit. Dignissimos debitis itaque fugiat! Dolore libero voluptatem facilis adipisci earum id. Porro, sapiente! Quibusdam modi nemo vel qui repellendus nulla dicta facilis earum dolor, beatae facere, tenetur aspernatur?
-    Ea eum vel placeat velit quisquam et, rem amet eos, tempore totam fugit tempora? Placeat, delectus expedita aspernatur vel nisi necessitatibus, eos nam at repellendus eligendi facilis dolorum inventore! Nihil?
-    Possimus, soluta. Veniam, consectetur debitis officiis iure itaque molestiae pariatur quaerat, optio consequatur non fugit quae repudiandae nam praesentium rerum. Ex atque recusandae quo incidunt vero aut necessitatibus? Alias, repellat!
-    Veritatis, quibusdam nam quae error accusamus quis id adipisci excepturi aliquam nemo nesciunt eum totam magnam quas porro, eaque obcaecati ipsam provident quisquam! Tempore, voluptas eaque. Architecto corporis repellendus tenetur!
-    Labore odit nam harum sapiente? Accusantium commodi impedit assumenda aliquam labore perferendis earum autem qui eligendi libero quaerat fuga, ipsa asperiores numquam, dolorum nulla eum repudiandae iste. Deleniti, cumque repellat!
-    Molestias voluptatum cum blanditiis sunt rerum obcaecati illo aspernatur nemo praesentium? Illo, necessitatibus. Tempora praesentium, sunt voluptatum alias doloribus saepe vel dicta magni expedita, nisi earum? Consequatur nisi corporis accusantium?
-    Reiciendis doloremque harum voluptas, fugit ducimus nemo facere qui sapiente atque iusto culpa. Perferendis, ratione ut assumenda tenetur maxime rerum cum, ullam autem consequatur reprehenderit inventore suscipit laboriosam tempore voluptate?
-    Deserunt harum, pariatur accusamus quis aliquam assumenda sunt aut, voluptas ad quod porro voluptate eaque nulla id suscipit corporis similique illo, repudiandae minus beatae optio. Cumque possimus magnam ea sequi!
-    Quia, officiis. Illo veniam magnam dolorum labore, eligendi aspernatur dolore tempore voluptatem? Eum quibusdam saepe porro suscipit, provident quae explicabo modi adipisci tempore aliquid nihil eveniet, eos delectus, quod natus!
-    Aspernatur distinctio, similique vero pariatur doloremque amet ullam molestias ex consequatur quidem nostrum nisi! Ratione, fugit accusamus ab vero nisi, laboriosam dolorum ducimus commodi error possimus laborum incidunt. Similique, eos.
-    Quas molestiae nostrum, modi fuga asperiores quos libero dicta aliquam laborum similique tempora officia harum doloribus repellat a repellendus ullam molestias quis maiores explicabo culpa fugiat. Quod laudantium expedita dolores.
-    Illo similique voluptatem sint tempora harum officiis nesciunt dolor culpa perferendis sapiente labore, nostrum, rerum magni commodi magnam quasi soluta eaque dolorem iusto iure aliquid. Non quod nostrum sequi velit?
-    Reiciendis nostrum asperiores blanditiis facere sequi quis omnis quam quod eius esse quas molestias nulla animi culpa atque, assumenda amet pariatur veniam ex quae obcaecati dolores corrupti! Aspernatur, mollitia ab.
-    Doloribus hic atque ipsam vero? Saepe deserunt nisi nemo, ratione quasi officiis, sed neque iusto, inventore aliquid rerum accusantium non reprehenderit possimus nam commodi? Praesentium, ullam. Libero odit mollitia optio.
-    Corrupti sed atque molestias odio ipsum, nemo labore temporibus perferendis, ullam blanditiis maiores. Et ullam quae officia incidunt error eos tempore aperiam assumenda vitae accusantium ut quaerat saepe, a animi.
-    Dolor laborum earum accusantium fugit pariatur officia ad quam, similique placeat fugiat quia consectetur, atque provident? Quae ea iste soluta repellendus, vitae adipisci reiciendis explicabo pariatur delectus sunt debitis maxime.
-    Ea earum corporis dignissimos! Reprehenderit accusantium earum quasi amet, excepturi ducimus? Quaerat error ea esse ducimus quo magnam dignissimos sed, molestias alias dolorem tenetur ipsam iure provident officia expedita iusto!
-    Qui delectus alias voluptatibus id omnis! At quaerat omnis accusantium. Sunt obcaecati laboriosam doloribus unde explicabo. Libero illum voluptatem, architecto quam repellendus molestias corrupti, repellat atque deserunt nesciunt dolorum sed.
-    Odit doloremque harum similique illum nam sit quisquam dolor impedit debitis, ex voluptatem? Eius assumenda cum saepe dolorum unde fuga quod laboriosam. Alias, exercitationem! Eum corporis ullam fuga tenetur aspernatur.
-    Magni eius voluptatibus molestiae ex voluptate. Debitis hic exercitationem consectetur placeat vitae laborum soluta ipsam assumenda nihil earum magnam similique ratione mollitia dolorum, praesentium aliquid sapiente nam quibusdam necessitatibus quos!
-    Qui aspernatur omnis eum praesentium possimus eos aut deserunt expedita, quisquam, fugiat obcaecati neque dolores nobis id deleniti, natus asperiores accusantium animi dolorum atque laudantium exercitationem beatae quos! Vitae, iste!
-    Nam fugit sit dicta autem. Officiis, in eum fuga voluptatibus blanditiis nam accusamus. Officiis, esse odit quasi debitis hic atque nesciunt itaque fugiat nulla, minima deserunt quae cumque deleniti facere?
-    Quos cumque perferendis eum eligendi exercitationem deleniti dolores voluptatum, dignissimos sunt odio molestias ducimus quasi aspernatur et quis! Tempore deleniti repellat enim consequatur omnis cupiditate earum ipsa fuga voluptates velit?
-    Voluptatem qui magni est sunt, ut doloribus rem cumque. Architecto blanditiis iusto eum et illum eligendi error doloribus ex, autem necessitatibus harum dolores. Praesentium facere quibusdam id consequuntur delectus neque?
-    Dolor quis odit reiciendis laboriosam et. Cupiditate, porro nobis a eum culpa cum, sequi voluptatibus quaerat sint vel enim explicabo, saepe atque impedit molestiae amet accusantium perferendis iure eligendi doloribus.
-    Esse voluptatum mollitia temporibus eum numquam, assumenda cupiditate accusamus molestias dolorum vero eius ratione sequi aut, repudiandae modi iure facere. Fugit labore molestiae dolore odit sapiente soluta, eos impedit obcaecati.
-    Autem quam itaque quidem amet? Dolorem, similique optio praesentium, laboriosam vero ex architecto ea culpa voluptatibus ratione molestias necessitatibus quas error odio nihil enim repudiandae quia. Obcaecati necessitatibus repellendus et.
-    Fugiat, quos laudantium. Aspernatur laboriosam consequuntur sunt, ipsa reprehenderit, corrupti eligendi nam officia necessitatibus vitae fuga ex porro illo. Provident aliquam ipsam vel esse labore aspernatur voluptatibus ad doloremque quisquam.
-    Iure porro quia cupiditate odit maiores id enim nam nulla unde blanditiis nesciunt soluta aliquam voluptates veniam nemo rerum, maxime accusantium dolor, eos praesentium nihil totam, corrupti atque ipsam? Esse!
-    Natus illo illum suscipit impedit repudiandae vero temporibus? Possimus ipsa animi ea quis dignissimos incidunt distinctio quam corrupti tempore, id at perferendis aliquam voluptates cupiditate libero quibusdam, earum maiores unde!
-    Officia officiis quisquam obcaecati deleniti, dolorem ratione earum at ducimus iste, ipsam iusto reiciendis repellendus vero voluptatem possimus tempora nobis dicta accusantium animi voluptas. Cum adipisci veniam totam ipsum quia?
-    Voluptatem consequatur tempore velit quam praesentium excepturi beatae deserunt quisquam aliquid error, ducimus repellat accusantium soluta consequuntur dolores deleniti aliquam maiores commodi animi quasi dolore maxime delectus. Ab, alias quas.
-    Placeat provident omnis ex sit, accusantium impedit molestias suscipit et nobis veritatis explicabo necessitatibus dolores, architecto ipsam cum sint, veniam recusandae dignissimos dolorum eius consequuntur. Dolor in numquam ducimus velit.
-    Vero, amet eveniet nihil fuga eligendi consequatur repellat natus. Dolorum nisi doloremque eaque corrupti et aut sapiente possimus temporibus deleniti est? Iste impedit quibusdam voluptatem quisquam porro nobis doloremque eius.
-    Veritatis, pariatur tempora. Quidem tenetur amet corporis reiciendis sed, consectetur excepturi expedita odit vero sit magnam quia ipsam. Quibusdam harum earum ad sequi dolores dicta iste quo minus quam facilis.
-    Voluptates labore illum sit nihil quisquam nostrum, culpa rerum quis eligendi et soluta hic ratione architecto dolor ullam provident ea minus consectetur iure placeat alias? Culpa deserunt optio quasi asperiores.
-    Ipsa enim soluta rem id harum tempore quo dolore. Laborum ullam exercitationem esse, eaque nisi aut modi reprehenderit. Aspernatur corrupti minus aliquid quam, autem iusto maxime saepe velit perspiciatis iure?
-    Delectus id incidunt, dolorum in et ducimus ex iure voluptatum vitae neque soluta commodi exercitationem at eligendi eius voluptas laborum autem vel? Temporibus sint officia totam non hic officiis quibusdam?
-    Harum sed asperiores quam ducimus maxime. Tempora commodi ab saepe harum necessitatibus cumque accusantium ipsam sed cum, eligendi quo corporis sint odio distinctio quae adipisci, expedita debitis quaerat perferendis! Maxime?
-    Cum dignissimos maxime minus inventore sit impedit quisquam optio obcaecati voluptates, quas earum sed reprehenderit expedita natus deleniti minima itaque, consequatur nostrum tempore. At aliquam ut vero ab, deleniti magnam?
-    Cum ad maxime, consectetur repellendus soluta eveniet quae dolor quaerat reprehenderit, perspiciatis iste. Quasi facere sint nobis mollitia sit natus accusamus, quas quis doloribus sunt architecto est, dicta quo eveniet?
-    Et nam fugit omnis quod perspiciatis? Porro, quisquam aspernatur laborum quasi doloremque iusto nam. Officiis odit ea aspernatur magni consequuntur a commodi. Aliquam odio modi eligendi veritatis, perferendis provident eaque.
-    Sit at vel iusto provident vero quisquam alias cumque aperiam porro quam ratione, eligendi, reprehenderit tenetur accusantium tempora eveniet id. Quos debitis iusto, molestias placeat nobis iure in obcaecati ipsam!
-    Nihil, modi vel aut perferendis ipsa ducimus quasi quos adipisci molestiae minima, quae quod beatae nobis quaerat. Ex beatae illo sunt praesentium ab quod iure quam, natus nihil voluptate accusantium!
-    Ad blanditiis porro fuga facere, ex consectetur eveniet nulla cum, aliquam obcaecati facilis ipsa optio nostrum. Eius quam dicta officiis molestiae? Exercitationem a nihil illo impedit omnis culpa velit expedita.
-    Non velit iusto est maiores facilis numquam rerum optio molestiae eos. Aliquam, quasi consequuntur, maxime nobis ipsa fugit impedit in magnam dolorem vero odit incidunt aliquid commodi consectetur provident! Rerum?
-    Dolorem eum amet natus. Neque vel nobis mollitia laborum. Quis quae dolore quibusdam ducimus sequi perspiciatis sint, nesciunt error eligendi facere vero necessitatibus saepe voluptatibus blanditiis nulla, deserunt ad distinctio?
-    Aspernatur, distinctio impedit ex deleniti non blanditiis iusto rem ipsam et nulla corrupti iste atque, enim dolore similique necessitatibus ipsum! Ea quos, ex beatae commodi provident rem ipsum modi aperiam!
-    Quas magni similique, tempore omnis aut esse dignissimos ex, labore consequatur pariatur consequuntur porro obcaecati provident perferendis nesciunt alias veritatis. Architecto dolorum similique aperiam obcaecati accusamus delectus libero sunt tenetur.
-    Illum corrupti dolorem eveniet nulla et molestiae praesentium aspernatur magni maiores. Dolore natus maxime dolores ratione dignissimos nostrum facilis illum nulla odit aliquam, modi numquam distinctio laudantium! Officiis, numquam officia.
-    Sapiente tempora officia error quae numquam quam ipsam soluta temporibus ratione quidem? Itaque magni temporibus, ducimus explicabo earum maxime quod exercitationem optio, cupiditate quae adipisci omnis iusto quis repellendus qui.
-    Placeat, magni soluta? Eveniet, consequuntur deserunt sapiente commodi saepe quaerat, et quas porro odio quos iste enim aspernatur mollitia ipsam cumque doloribus quia tenetur illum velit numquam facere dolore voluptas.
-    Eius eum rem placeat. Ut quidem quisquam minus illo, at libero, sequi dicta, iste eos quos id molestiae provident modi minima quia mollitia repudiandae? Nesciunt illum nisi modi corporis sunt?
-    Veniam dolores esse consequuntur cumque dignissimos eligendi distinctio sapiente, cum sunt. Architecto reprehenderit facilis voluptatibus ad quidem aliquam minus, ipsam repellat excepturi libero, rerum vero possimus sint nobis tenetur officia.
-    Tempore minus deleniti, quam perspiciatis reiciendis cupiditate, libero error aut numquam ea ipsa neque odio, commodi inventore! Excepturi earum ut quibusdam obcaecati dolores veniam, unde tenetur perferendis harum, reiciendis temporibus!
-    Ex error similique recusandae dolores possimus tempore dolorem odit dignissimos tempora deleniti aliquam totam itaque iste fugiat blanditiis, vel ipsum hic doloribus. Magnam, explicabo numquam iure enim esse qui illo!
-    Ducimus culpa dolore quae? Aspernatur, molestiae blanditiis doloremque mollitia nulla sequi aliquam in magni laboriosam, maxime placeat magnam rem. Quidem dolores molestiae inventore officiis. Reprehenderit nemo explicabo impedit dolorem sint?
-    Maxime labore quisquam qui deserunt ad incidunt, repellat eum ab quidem ut ratione. Voluptatem corporis ad assumenda totam nulla cumque optio, animi recusandae libero adipisci nam iste rem voluptatum at.
-    Itaque officia, tempore necessitatibus praesentium quasi dignissimos! Accusantium saepe iure facere tempora consequatur libero laudantium neque quis aperiam, consectetur beatae dolorem illo. Quos voluptatem modi quo nostrum itaque beatae consectetur.
-    Tempora natus voluptatem, magni doloribus ex est dicta officia fugiat ea atque molestiae asperiores unde sunt nesciunt eum neque id deserunt? Fugiat dolorum reiciendis libero quibusdam eius optio voluptatibus autem?
-    Dolorum odit in dicta, incidunt temporibus facilis tempora itaque reprehenderit consequuntur, pariatur placeat quo recusandae maxime aliquid. Quibusdam ullam similique assumenda tempora numquam recusandae nesciunt. Officia nulla qui praesentium molestias.
-      `,
-        ],
+ `       ],
       },
       {
         id: "c2",
         title: "សុត្តន្ត — ទេសនាដំបូង",
         content: [
-          "ព្រះអង្គបានទេសនាអរិយសច្ចាទាំងបួននៅឧទយនវ័នជូនដល់បង្គំបឋមបញ្ញាវន្ត។",
-          "ទុក្ខ សមុទាយ និរោធ មគ្គ — គឺជាឆាកសក្ដិសម្ងាត់នៃការចេញពីទុក្ខ។",
-          "អ្នកបន្តិចបន្តួចដឹង ស្តាប់ និងអនុវត្ត ត្រូវតាមមគ្គមានអាសីតិទោស។",
+          `រាម៉ាយណៈ (អង់គ្លេស: Reamkerថៃ: รามเกียรติ์,Riêm kê,റീയംകെർ)ឥណ្ឌាមាន័យថាដំណើររបស់រាម ដែលជារឿងដើមរបស់ឥណ្ឌាដែលមានតែមួយកំណាត់ប៉ុណ្ណោះពីពាក់កណ្ដាលសាច់រឿងដល់បញ្ចប់[១]
+
+រឿង​រាមកេរ្តិ៍ ខ្មែរមានន័យថា កិត្តិសព្ទ​របស់រាម ភាពល្បីរណ្ទឺរបស់រាម មានតែខ្សែរទី1ដល់ទី10 និងទី75ដល់80។ រាមកេរ្តិ៍ខ្មែរមានលំនាំតាមរឿងរាមាយនៈ របស់ឥណ្ឌា ប៉ុន្តែអ្នកនិពន្ធខ្មែរមានភាពប៉ិនប្រសប់ក្នុងការដាក់បញ្ចូលសាច់រឿងអោយមានស្ថានភាពស្របទៅនឹងរបត់សង្គមខ្មែរនាសម័យបុរាណ។ ខ្សែរវគ្គនៃរឿងរាមកេរ្តិ៍ខ្មែរ បានដាច់ក៏ដោយសារតែថែវប្រាសាទដែលបានឆ្លាក់រឿងនេះ ត្រូវបានបំភ្លេចបំផ្លាញក្នុងភ្លើងសង្គ្រាមជាច្រើនសារ។ ល្ខោនខោលដែលជាទម្រង់ល្ខោនមានតាំងពីសម័យអង្គរ ក៏បានលើកយករឿងរាមកេរ្តិ៍ខ្មែរមកលេងដែរ ដែលនេះជាភស្តុតាងយ៉ាងច្បាស់មួយដែលបង្ហាញថា រឿងរាមកេរ្តិ័ខ្មែរ មានអាយុកាលចាស់ជាង រឿងរាមកៀនថៃទៅទៀត។​[២]
+
+រឿងរាមកៀន ថៃមានន័យដូចខ្មែរ មានខ្សែរទី1រហូតដល់បញ្ចប់ ដោយនិពន្ធបន្ថែមដោយស្ដេចថៃផ្ទាល់រាមាទី1។ ថៃក៏បានលេងរឿងរាមកៀនរបស់ខ្លួន ក្នុងទម្រង់ល្ខោនខូន (ល្ខោនដែលមានទម្រង់ស្រដៀងនឹងល្ខោនខោលខ្មែរដែរ) គេដែរ។
+
+ចំពោះតួអង្គព្រះរាមល្ខោនខោល ពលរដ្ឋខ្មែរធ្វើរូបខ្មុក តួអង្គព្រះរាមជាអវតាព្រះវិស្ណុះមានពណ៌ខៀវខ្ចីមានបបូរមាត់ក្រហមស្រាល
+
+ហើយព្រះរាមថៃមានពណ៌ខៀវចាស់និងមានបបូរមាត់ក្រហមឌិត។​
+
+ព្រះរាមបែបឥណ្ឌាមានទម្រង់ពណ៌ខៀវ។​
+
+រឿងរាមកេរ្តិ៍ ព្រះបាទទស្សរថ សោយរាជ្យនៅ
+
+នគរ តៈថៈសិលា ថៃក្រឡៃទៅជានគរអយុធ្យា
+
+ព្រះរាម មានឈ្មោះថា ព្រះពិស្ណុការ ដែលជាឈ្មោះប្រសិដ្ឋនាមដោយកូនស្រីទាំង៧របស់អទិទេពព្រហ្មព្រះរាម ត្រូវបាននាងកោសកល្យាណត្រូវជាមហេសីព្រះបាទទស្សរថ យកមកធ្វើជាកូនដែលមានព្រះបរមនាមថាព្រះរាម ត្បូងនិលខ្មៅកើតជាស្វាខ្មៅ ឈ្មោះនិលភ័ក្រ អ្នកនាំសារព្រះរាម ថៃក្រឡៃទៅជានិលផាត ថ្លើមថ្មពណ៌សកើតជាហនុមាន ហនុមានច្រឡំថាព្រះរាមជាឪពុករបស់ខ្លួន ព្រះរាមចង្អុលទៅព្រះអាទិត្យ ហនុមានហោះទៅព្រះអាទិត្យក្រឡេកឆេះសល់តែរោមមួយសរសៃដោយក្ដីអណិតក៏ជប់ឲរស់ឡើងវិញ ហើយបានស្ដោះកូនព្រះអាទិត្យ៧ដួងឲហនុមានលេបទើបហនុមានរិទ្ធខ្លាំងពូកែ ។
+
+នាងកៃកេសីស្នំទី១របស់ព្រះបាទទស្សរថ បោកឲនាង សមុទ្រទេវីស្នំទី២ ហូបបាយរបស់នាងកោសកល្យាណ ដែលជាបាយ ៣ចំនែករបស់ព្រះឥន្ទជប់ទៅឲនាងទាំង ៣ ដែលសុំកូនពីទ្រង់
+
+នាងកោសកល្យាណ កូនចិញ្ចឹមព្រះរាម
+
+នាងកៃកេសី កូនឈ្មោះ ភិរុទ
+
+នាងសមុទ្រទេវី កូនទី១ព្រះលក្សណ៍ និង សុត្រុត
+
+នាងសីដា កូនរបស់ ព្រះបាទជន្មក៏ នៅនគរ មិថិលា
+
+ពាលី ស្ដេចយក្សក្បាលស្វា គ្រប់គ្រងពលយក្សអសុរៈនៅនគរ បាតាល់ ថៃក្រឡៃថា នគរខាន់ខិនបុរី
+
+សុគ្រីព ប្អូន ពាលី
+
+អង្គត់ កូនរបស់ពាលី និងនាងមណ្ឌលគិរី
+
+នាងស្វាហាយ ប្អូនស្រីពាលី
+
+គោឧសភារាជ យាន្តជំនិះព្រះសីវៈ ដែលហនុមានទៅយកទឹកមូដ្ឋ
+
+ជតាយុ ស្ដេចគ្រុឌ យាន្តជំនិះ ព្រះវិស្ណុះ ដែលតាមជួយ ព្រះរាម គ្រប់ពេលវេលា និង អតីតកាល ជាក្មេងធម្មបាលកុមារ
+
+ក្រុងរាពណ៍ យក្សក្បាល ១០ ដៃ ២០ សោយរាជ្យនៅនគរលង្កា
+
+ឥន្រ្ទជិត កូនក្រុងរាពណ៍ និង នាងមណ្ឌលគីរីដែលត្រូវ ក្រុងរាពណ៍ ដណ្ដើមពី ពាលី
+
+រាមសូរ្យ យក្ស ដែលខឹងនិងរារាំងដំណើរព្រះរាម ដែលបានឲត្បូងមោរា ទៅឥសីគ្រូ ហើយត្បូងបានទៅនាងមេខលា ថៃហៅថា នាងកែវមនោរា ។
+
+Admin និងលើកយកតួអង្គ ទាំងអស់មកពេលក្រោយ ។
+
+រឿងរាមកេរ្តិ៍ នាងសីតា ឥណ្ឌា ខ្មែរហៅនាងសីដា
+
+ជាកូនព្រះបាទជន្មក៏ នៅនគរមិថិលា នាងមានសម្រស់ដាច់គេនៅនគរមិថិលា និងមានរូបសម្បត្តិស្អាតដូចស្រីសួគ៌ ព្រះបាទជន្មក៏ ចង់រើសស្វាមីមកឲនាង ដោយចេញរាជសាររាល់អ្នកណាដែលអាចលើកដងធ្នូរដែលកើតចេញពីការកូរសមុទ្រទឹកដោះបាន ទ្រង់និងលើកកូនឲអ្នកនោះ ពេលនោះមានការចូលរួមពីគ្រប់ទិសទី ទាំងទេវៈ ក្រុមយក្សជាច្រើន ក្រុងខរ ក្រុងរាពណ៍ ព្រះឥន្ទ្រាធិរាជ សុទ្ធតែចង់បានរូបនាងតែគ្មានអ្នកណាម្នាក់លើកដងធ្នូរនោះរួចនោះទេ សូម្បីតែព្រះរាមដែលមកលើកក្រោយគេ ទ្រង់បាននឹកឃើញ
+
+ត្បូងបុក្ដា ត្បូងពណ៌ស្វាយដែលទទួលបានពីកូនទាំង៧របស់អទិទេពព្រហ្ម ទ្រង់បានដាក់វាចូលទៅក្នុងដងធ្នូរ ពេលនោះទ្រង់បានលើករួច ហើយទទួលបាននាងសីដាសមដូចបំណង ហើយជាពេលដែលទទួលបានការច្រណែនគ្រប់អ្នកទាំងពួង មកដល់តាមផ្លូវនៃព្រំដែននគរក្រុងខរៈ បានជួបនិងយក្សឈ្មោះ ពិរាធ ថៃហៅថាភិរាជ ឃើញនាងសីដាស្អាតក៏ចាប់នាងទៅ ក៏កើតចម្បាំងជាមួយព្រះរាម និង ព្រះលក្សណ៍ អ្នកទាំងពីរក៏សម្លាប់យក្សនោះទៅ
+
+ក្រោយមកពួកគេបានជួបនិងយក្ស សូរបន់ខា ដែលជាប្អូនស្រីក្រុងរាពណ៍ កាឡាខ្លួនជាស្រីស្អាតមកស្រលាញ់ ព្រះរាម និង ព្រះលក្សណ៍ ដោយព្រះលក្សណ៍ សុើបដឹងថានាងជាយក្ស ក៏ខឹងខ្លាំងចាប់នាងមកកោរសក់ សូរបន់ខា យំរហូតលឺដល់
+
+ក្រុងខរៈ ផ្អើលដល់ក្រុងខរដែលជាប្អូនក្រុងរាពណ៍ក៏នាំកូននិងពលសេនាចេញច្បាំងនិងព្រះរាម រួចក៏ត្រូវព្រួញសីលដែលកើតពីការកូសមុទ្រទឹកដោះ ដែលព្រះរាមលើករួច យកមកបាញ់ ក្រុងខរ និងពលសេនាស្លាប់អស់ទៅ ដំណឹងស្លាប់ប្អូនលឺមកដល់ក្រុងរាពណ៍ ក៏សម្រេចចិត្តរៀបគម្រោងទៅចាប់នាងសីដា ដោយឲបរិវារខ្លួនឈ្មោះមហារី ក្រឡាខ្លួនជាប្រឺសដើម្បីបញ្ឆោតឲព្រះរាមនិង ព្រះលក្សណ៍៏ចេញទៅបរបាញ់ដើម្បីយកស្បែកធ្វើផាហ៊ុំឲនាងសីដា ក្រោយពេលអ្នកទាំងពីរទៅផុត ក្រុងរាពណ៍ ក៏ចាប់យកនាងសីដាទៅ តែត្រូវរារាំងដោយស្ដេចគ្រុឌដែលជាយាន្តជំនិះរបស់ព្រះវិស្ណុះ ដែលថៃក្រឡៃថាស្ដេចកុកស ពេលនោះក្រុងរាពណ៌ ក៏ដោះជញ្ជៀននាងសីដាសូត្រមន្តគាថា គប់ជញ្ជៀននាងសីដាត្រូវស្លាប ជតាយុ ធ្លាក់ចុះមកហើយក៏នាំនាងសីដាហោះទៅនគរលង្កាបាត់ទៅ ចំនែកជតាយុចាំរៀបរាប់ហេតុការណ៍ឲព្រះរាម និង ព្រះលក្សណ៍ បានដឹង....។
+
+រឿងរាមកេរ្តិ៍ ក្រោយពេលស្ដេចគ្រុឌ ជតាយុ ប្រាប់ដំណឹងដល់ព្រះរាម និង ព្រះលក្សណ៍ ហើយជតាយុ ដែលជាគ្រុឌចំណាស់ដែលមានអាយុរាប់ពាន់ឆ្នាំ ក៏រលត់សង្ខារទៅ ។
+
+ស្ដេចគ្រុឌ ជតាយុ ជាយាន្តជំនិះព្រះវិស្ណះ ជាអ្នក
+
+តាមជួយព្រះរាមនៅវ័យក្មេង ក្នុងការផ្ដល់សេរីសួស្ដី៣ ប្រការ នៅដើមសូត្រកប្បាស ខ្មែរហៅដើមគរ ពលរដ្ឋមួយចំនួនធំយកនិទានពីថៃវិញ ថាដើមត្នោត ។
+
+ព្រះព្រហ្មដាក់សង្ខាររបស់ខ្លួនក្នុងការកាត់ភ្នាល់ក្បាល របស់ខ្លួនដោយចង់ផ្ចាញ់ធម្មបាលកុមារ ឬ ព្រះរាម ដែលមានកំណើតពីអវតាព្រះវិស្ណុះ
+
+ព្រះសីវៈអស់សង្ខារក្នុងការផ្នាល់ឲ្យសភាវៈកេទុសុី ។
+
+ព្រះរាម និង ព្រះលក្សណ៍ បានអស់កម្លាំងសំរាកនៅក្រោមដើមស្វាយមួយ រំពេចនោះ ថ្លើមថ្មពណ៌សដែលនៅក្នុងថង់យាម ព្រះរាមបានរីកមាឌ ហើយកើតជាស្វាស មួយក្បាល វាបើកភ្នែកដំបូងឃើញព្រះរាមមុនគេ ក៏យល់ថា ព្រះរាមជាឪពុករបស់ខ្លួនហើយតាមព្រះរាមជាប់ស្អិតមិនរបេះនោះទេ ដោយភាពធុញទ្រាន់ព្រះរាមក៏ចង្អុលទៅព្រះអាទិត្យហើយពោលថានោះទើបឪពុកឯង រំពេចនោះស្វាសក៏ហោះសម្ដៅទៅព្រះអាទិត្យ ព្រះអាទិត្យក្រឡេកឆេះសល់តែរោមមួយសរសៃ ដោយក្ដីអណិតព្រះអាទិតក៏ជប់ឲស្វាសនោះរស់ឡើងវិញ ហើយបានស្ដោះកូនព្រះអាទិត្យ៧ដួងឲស្វាសនោះលេប ទើបស្វានោះមានរិទ្ធខ្លងពូកែ និងបញ្ជូនស្វាសនោះមកជួបនិងព្រះរាមវិញ ដោយសារស្វាសនោះមានចង្ការបាក់ព្រះរាមក៏ឲឈ្មោះថា ហនុមាន ហើយថៃនិទានផ្សេងពីនេះ ។ ដោយល្ខោនខោលខ្មែរ ហនុមាន ប្រើទម្រង់គ្រឿងស ថៃក្រឡៃ ទម្រង់គ្រឿងល្ខោនខោល ហនុមាន មានលាយពណ៌ក្រហម និង ពណ៌លឿង។
+
+រឿងរាមកេរ្តិ៍ ដំណើរទៅជួយនាងសីដា
+
+ក្រោយពេល ព្រះរាម និង ព្រះលក្សណ៌ ព្រមទាំងហនុមាន ស្គាល់គ្នាពួកទ្រង់ក៏បន្តដំណើរទៅមុខទៀត ហើយសម្រាកនៅក្បែរអូរមួយ ព្រះលក្សណ៌ក៏ចុះទៅស្រង់ទឹកអូរនោះ ហើយបានលឺសម្លេងយំសោក របស់ សុគ្រីព ដែលជាប្អូនរបស់ពាលី ដែលត្រូវបានពាលីបណ្ដេញចេញពីនគរបាតាល់ ព្រះលក្សណ៌បានសួរនាំសុគ្រីពហើយនាំ សុគ្រីពមកជួបព្រះរាម ដោយក្ដីគុំគួន ការសន្យាបានកើតឡើង បើព្រះរាមអាចសម្លាប់ ពាលីបាន ទូលបង្គំសុខចិត្តថ្វាយទ័ពស្វា 5ម៉ឺននាក់ ដល់ទ្រង់ដើម្បីទៅរំដោះនាងសីដា សុគ្រីពនាំ ព្រះរាមនិង ព្រះលក្សណ៌ទៅជួបនិង ពាលលី សុគ្រីព កកើតចម្បាំងជាមួយពាលី ដោយក្ដីច្រឡំ ព្រះរាមមិនអាចថ្លែងស សម្លាប់ពាលីបាន ព្រះលក្សណ៌បានប្រាប់ឲសុគ្រីពផ្អាកប្រយុទ្ធមួយភ្លេតសិន ហើយយកកម្រង់ផ្ការពាក់ដើម្បីសម្គាល់សុគ្រីព ព្រះរាមក៏បានថ្លែងសសម្លាប់ ពាលីបាន ព្រះឥន្ទឃើញដូចនេះមានភាពសប្បាយចិត្តក៏ត្រាសបង្គាប់ឲព្រះវាយោគ៌ ឥណ្ឌាហៅព្រះវាយោគ៌ ថៃហៅវ៉ាយុ ឲបក់ធាតុស្វាពាលីទៅចាប់កំណើតថ្មី ក្រោយចប់កិច្ចការ សុគ្រីពមិនអាចរកទ័ពស្វាទាំង 5ម៉ឺុននាក់ បានភ្លាមៗ ព្រះរាមខ្ញាល់គម្រាមថ្លែងសកើតជាភ្លើងដុតឆេះនគរបាតាល់ សុគ្រីព សុំពន្យាពេលដោយឲហនុមាន មានវ័យធំ សុគ្រីពឲហនុមានក្រឡាខ្លួនតូចចូលក្នុងថង់ក្រណាត់ ហើយយកទៅជួបនិងមហាជម្ពូរាជដែលជាគ្រូ ដើម្បីជប់ឲហនុមានឲមានវ័យធំ ក្រោយមកហនុមានក៏មានវ័យធំហើយជួបនិងព្រះរាមក៏បន្តដំណើរឆ្ពោះទៅកោះលង្កាបន្ត ដែលហែរហមដោយទ័ពស្វាចំនួន 5មុឺន ដែលមានមេទ័ពឈ្មោះ រុក្ខរៈពានរ ពួកគេបានទៅដល់ឆ្នេរសមុទ្រ តែមិនអាចឆ្លងសមុទ្រទៅបាន ទើបឲហនុមានហោះទៅក្រុងលង្កាមុន ហនុមានបន្លំខ្លួនជាមេទ័ពក្រុងរាពណ៌ ឈ្មោះ ទស្សកណ្ឌ ហើយសចូលក្នុងក្រុងលង្កាសុើបដឹងពីការលាក់ទុកនាងសីដានៅសួនអសោក រួចចូលជួបនាងសីដារៀបរាប់ហេតុការណ៍ទាំងពួង តែនាងនៅតែមិនជឿហនុមានក៏យកជញ្ជៀនដែល ក្រុងរាពណ៌គប់ស្ដេចគ្រុឌ ទើបនាងសីដាជឿហនុមាន តែហនុមានមិនអាចយកនាងចេញបានភ្លាមក៏ អុកឡុកក្រុងលង្កា ក្រុងរាពណ៌ខឹងខ្លាំង បញ្ជាឲកូនរបស់ខ្លួនទៅចាប់ ហនុមាន ។ ឥន្ទ្រជិត បានថ្លែងសជា នាគរាជ រំព័ទ ចាប់ហនុមានបាន និងវាយដំសួរនាំហនុមាន ហនុមានប្រាប់ពីរដំណើរមករំដោះនាងសីដា ដោយមិនមានការភ័យខ្លាច ឥន្ទ្រជិតយកឧបករណ៍ផ្សេងៗមកស្លាប់ហនុមាន តែហនុមានមិនស្លាប់ ឥន្ទ្រជិតទាល់ប្រាជ្ញាក៏ទូលថ្វាយក្រុងរាពណ៌ ក្រុងរាពណ៌ឲគេយកក្រណាត់ជ្រលក់ប្រេងមករុំហនុមាន ហនុមានក្រឡាខ្លួនកាន់តែធំ ក្រុងរាពណ៌ប្រើក្រណាត់រំកាន់តែធំរួចដុត ហនុមានបង្រួមខ្លួនតូចវិញ ក្រណាត់ធ្លាក់មកឆេះក្រុងលង្កា ហនុមាន ប្រើកន្ទុយដែលជាប់ក្រណាត់ដុតឆេះពេញក្រុងលង្កា ។
+
+ហនុមានចេញមកប្រាប់ដំណឹងដល់ព្រះរាមវិញ ព្រះរាមត្រេកអរណាស់ក៏តែងតាំងហនុមានជា កំផែងពេជ្រ ។ ព្រះរាមឲហនុមានទៅសុំជំនួយពីមហាជម្ពូរាជ ដើម្បីឆ្លងមហាសមុទ្រ ហនុមានតំកើងរឹកពេលទៅជួប មហាជម្ពូរាជ មហាជម្ពូរាជខឹងក៏ចាប់ហនុមានដាក់គុគ ហនុមានព្រមចូលគុគ ក្រោយមកហនុមាន ហោះនាំទាំងបល័ង្កដែលជម្ពូរាជដែលកំពុងផ្ទុំមកជួបព្រះរាម ព្រះរាមខ្លាចជម្ពុរាជ ភ្ញាក់ដឹងខ្លួនខឹង ក៏ចាត់ឲព្រះលក្សណ៌ទៅទូលព្រះវាយោគ៌ (ខ្យល់) សុំឲព្រះឥន្ទជួយ ព្រះឥន្ទបានយាងមកនិង ជប់ឲព្រះរាម ក្លាយជាព្រះវិស្ណុះ ហើយរៀបរាប់ពីអវតាមនុស្សដែលជាព្រះរាមទៅជម្ពូរាជដឹង ជម្ពូរាជយល់ព្រមជួយនិងបង្ហាត់ឲហនុមានចេះពន្លីចារណ៍លើដុំថ្មបោះទៅសមុទ្រឲអណ្ដែតរដើម្បីធ្វើជាស្ពានទៅយកនាងសីដា ។`
         ],
       },
       {
@@ -1042,6 +1035,6 @@ export const BOOKS: Book[] = [
           "អ្នកអនុវត្តកាន់តែជ្រាលជ្រៅ នឹងឃើញអានុភាពនៃការកត់សម្គាល់ និងបំភ្លឺ។",
         ],
       },
-    ],
+    ],  
   },
 ];
