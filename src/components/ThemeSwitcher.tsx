@@ -18,7 +18,7 @@ export default function ThemeSwitcher() {
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-sm font-medium text">Theme</span>
+      <span className="text-sm font-medium text">ពណ៌</span>
       <div className="relative inline-block">
         <select
           className="appearance-none cursor-pointer button rounded-lg border border-input bg-card px-3 py-2 pr-8 text-sm font-medium text-foreground shadow-sm transition-all duration-200 hover:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-1"

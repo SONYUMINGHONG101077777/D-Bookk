@@ -180,8 +180,8 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
     setIsEditing(false);
   }; 
   return (
-    <section className="flex h-screen flex-col overflow-hidden">
-      <header className="sticky top-0 z-20 bg-white/90 backdrop-blur border-b border-slate-200 px-3 py-3 sm:px-6">
+    <section className="flex h-screen flex-col overflow-hidden bg-[rgb(var(--card))]">
+      <header className="sticky top-0 z-20 backdrop-blur border-b border-slate-200 px-3 py-3 sm:px-6">
         <div className="flex items-center gap-3">
           <button
             onClick={onOpenToc}
@@ -194,7 +194,7 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
             <div className="text-xs sm:text-sm text-slate-500 truncate">{book.title}</div>
             <h1 className="mt-0.5 text-base font-semibold sm:text-xl truncate text">{chapter.title}</h1>
           </div>
-          <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700">
+          <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text">
             <span onClick={() => setIsEditing((v) => !v)}>
               ទំព័រ {toKhmerNumber(pageSafe + 1)}/{toKhmerNumber(totalPages)}
             </span>
@@ -223,7 +223,7 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
                     setPageInput(String(clamped));
                   }}
                   onFocus={(e) => e.currentTarget.select()}
-                  className="w-16 rounded-md border border-slate-300 bg-white px-2 py-1 text-sm text-slate-900"
+                  className="w-16 rounded-md border border-slate-300  px-2 py-1 text-sm text-slate-900"
                   aria-label="Go to page"
                   title={`Enter a page number (1–${totalPages})`}
                 />
@@ -241,7 +241,7 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
 
       <div
         ref={containerRef}
-        className="flex-1 overflow-y-auto bg-slate-50 px-4 py-5 sm:px-6 md:px-10"
+        className="flex-1 overflow-y-auto px-4 py-5 sm:px-6 md:px-10"
       >
         <article
           className="mx-auto max-w-3xl text-[1.05rem] sm:text-lg leading-relaxed"
@@ -252,14 +252,14 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
           }}
         >
           {currentPageContent.map((segment, i) => (
-            <p key={i} className={`mb-5 text-slate-900`} style={{ fontSize: `${fontSize}px` }}>
+            <p key={i} className={`mb-5 text-[rgb(var(--text))]`} style={{ fontSize: `${fontSize}px` }}>
               {segment}
             </p>
           ))}
         </article>
       </div>
 
-      <footer className="bg-white border-t border-slate-200 px-4 py-4 sm:px-6">
+      <footer className=" border-t px-4 py-4 sm:px-6">
         <div className="flex items-center justify-between gap-4">
           <button
             onClick={() => {
