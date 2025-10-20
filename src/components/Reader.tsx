@@ -181,7 +181,7 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
     setIsEditing(false);
   }; 
   return (
-    <section className="flex h-screen flex-col overflow-hidden bg-[rgb(var(--card))]">
+    <section className="flex h-screen flex-col overflow-hidden bg-[rgb(var(--card))] relative ">
       <header className="sticky top-0 z-20 backdrop-blur border-b border-slate-200 px-3 py-3 sm:px-6">
         <div className="flex items-center gap-3">
           <button
@@ -242,7 +242,7 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
 
       <div
         ref={containerRef}
-        className="flex-1 overflow-y-auto px-4 py-5 sm:px-6 md:px-10"
+        className="flex-1 overflow-y-auto px-4 py-5 sm:px-6 md:px-10 no-scrollbar"
       >
         <article
           className="mx-auto max-w-3xl text-[1.05rem] sm:text-lg leading-relaxed"
@@ -257,10 +257,11 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
               {segment}
             </p>
           ))}
+          <div className="h-[70px]"/>
         </article>
       </div>
 
-      <footer className="border-t px-4 py-4 sm:px-6 sticky">
+      <footer className="border-t px-4 py-4 sm:px-6 absolute bottom-0 left-0 right-0 bg-[rgb(var(--card))]">
         <div className="flex items-center justify-between gap-4">
           <button
             onClick={() => {
