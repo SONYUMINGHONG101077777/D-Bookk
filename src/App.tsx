@@ -45,7 +45,7 @@ const App = () => {
   };
 
   return (
-    <div className="relative flex h-screen bg-white text-slate-900">
+    <div className="relative flex h-[100dvh] bg-white text-slate-900">
       <div className={"hidden md:block"}>
         <TOC
           book={book}
@@ -55,7 +55,6 @@ const App = () => {
           onReset={onReset}
         />
       </div>
-
       <div
         className={[
           "fixed inset-y-0 left-0 z-40 w-72 max-w-[85vw] transform bg-white shadow-xl transition-transform duration-200 md:hidden",

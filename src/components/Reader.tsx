@@ -87,6 +87,7 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
     [book.chapters, chapterId]
   );
 
+  
   const initialSavedPage = useMemo(() => {
     if (!chapter) return 0;
     const saved = getLocation(book.id, chapter.id);
