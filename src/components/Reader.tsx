@@ -261,7 +261,7 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
         </article>
       </div>
 
-      <footer className="border-t px-4 py-4 sm:px-6 absolute bottom-0 left-0 right-0 bg-[rgb(var(--card))]">
+      <footer className="border-t px-4 py-4 sm:px-6 md:absolute fixed bottom-0 left-0 right-0 bg-[rgb(var(--card))]">
         <div className="flex items-center justify-between gap-4">
           <button
             onClick={() => {
