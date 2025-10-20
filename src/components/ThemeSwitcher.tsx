@@ -1,6 +1,7 @@
 "use client";
-import { Moon, Sun, Palette, Eye, Contrast } from "lucide-react";
-import { useThemeStore, type Theme } from "../store/themeStore";
+import { Moon, Sun, Palette, Eye, Contrast, Trees, Waves, Sunset, Flower2, Leaf, Heart } from "lucide-react";
+import { useThemeStore } from "../store/themeStore";
+import type { Theme } from "../utils/themeUtils";
 
 const options: { label: string; value: Theme; icon: React.ReactNode }[] = [
   { label: "Light", value: "light", icon: <Sun className="w-4 h-4" /> },
@@ -8,6 +9,12 @@ const options: { label: string; value: Theme; icon: React.ReactNode }[] = [
   { label: "Dark", value: "dark", icon: <Moon className="w-4 h-4" /> },
   { label: "Night (OLED)", value: "night", icon: <Eye className="w-4 h-4" /> },
   { label: "High Contrast", value: "contrast", icon: <Contrast className="w-4 h-4" /> },
+  { label: "Forest", value: "forest", icon: <Trees className="w-4 h-4" /> },
+  { label: "Ocean", value: "ocean", icon: <Waves className="w-4 h-4" /> },
+  { label: "Sunset", value: "sunset", icon: <Sunset className="w-4 h-4" /> },
+  { label: "Lavender", value: "lavender", icon: <Flower2 className="w-4 h-4" /> },
+  { label: "Mint", value: "mint", icon: <Leaf className="w-4 h-4" /> },
+  { label: "Rose", value: "rose", icon: <Heart className="w-4 h-4" /> },
 ];
 
 export default function ThemeSwitcher() {

@@ -1,4 +1,4 @@
-export type Theme = "system" | "light" | "sepia" | "dark" | "night" | "contrast";
+export type Theme = "system" | "light" | "sepia" | "dark" | "night" | "contrast" | "forest" | "ocean" | "sunset" | "lavender" | "mint" | "rose";
 
 export const THEME_COLORS: Record<Theme, Record<string, string>> = {
   light: {
@@ -48,6 +48,54 @@ export const THEME_COLORS: Record<Theme, Record<string, string>> = {
     muted: "100 116 139",
     border: "226 232 240",
     accent: "59 130 246",
+  },
+  forest: {
+    bg: "20 28 15",
+    card: "32 42 25",
+    text: "230 240 225",
+    muted: "140 155 135",
+    border: "55 75 50",
+    accent: "74 222 128",
+  },
+  ocean: {
+    bg: "15 35 50",
+    card: "25 50 70",
+    text: "220 240 250",
+    muted: "130 170 200",
+    border: "45 85 120",
+    accent: "34 197 238",
+  },
+  sunset: {
+    bg: "45 25 15",
+    card: "65 35 25",
+    text: "255 240 220",
+    muted: "180 130 100",
+    border: "120 60 40",
+    accent: "251 146 60",
+  },
+  lavender: {
+    bg: "240 235 250",
+    card: "250 245 255",
+    text: "60 40 100",
+    muted: "140 110 170",
+    border: "220 200 240",
+    accent: "168 85 247",
+  },
+  mint: {
+    bg: "240 255 250",
+    card: "245 255 252",
+    text: "10 80 60",
+    muted: "100 160 130",
+    border: "200 240 220",
+    accent: "16 185 129",
+  },
+  rose: {
+    bg: "255 240 245",
+    card: "255 245 250",
+    text: "100 20 60",
+    muted: "180 100 140",
+    border: "235 200 220",
+    accent: "244 63 94",
   },
 };
 

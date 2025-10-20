@@ -46,7 +46,7 @@ const App = () => {
 
   return (
     <div className="relative flex h-screen bg-white text-slate-900">
-      <div className="hidden md:block">
+      <div className={"hidden md:block"}>
         <TOC
           book={book}
           currentChapterId={shownChapterId}

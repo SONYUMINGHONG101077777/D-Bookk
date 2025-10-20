@@ -19,7 +19,7 @@ export default function TOC({
   onClose,
 }: Props) {
   return (
-    <aside className="w-full relative md:w-80 md:flex-none border-r border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4 sm:p-6 h-full overflow-hidden flex flex-col">
+    <aside className={`w-full relative md:w-80 md:flex-none border-r border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4 sm:p-6 h-full overflow-hidden flex flex-col`}>
       <div className="mb-4 flex items-center justify-between md:hidden pb-4 border-b border-[rgb(var(--border))]">
         <h2 className="text-2xl font-bold text-[rgb(var(--text))]">{book.title}</h2>
         <button

@@ -1,3 +1,4 @@
+import type { MouseEventHandler } from "react";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
@@ -20,6 +21,9 @@ type CurrentPosition = {
 type ReaderState = {
   currentBookId: string | null;
   currentChapterId: string | null;
+
+  isOpenSideBar: boolean;
+  toggleOpenSideBar: MouseEventHandler<HTMLButtonElement>;
 
   currentPosition: CurrentPosition;
 
@@ -53,6 +57,10 @@ export const useReaderStore = create<ReaderState>()(
     (set, get) => ({
       currentBookId: null,
       currentChapterId: null,
+
+      isOpenSideBar: true,
+      toggleOpenSideBar: () =>
+        set((s) => ({ isOpenSideBar: !s.isOpenSideBar })),
 
       currentPosition: {
         bookId: null,
@@ -215,6 +223,18 @@ export const useReaderStore = create<ReaderState>()(
       name: "reader-progress",
       version: 3,
       storage: createJSONStorage(() => localStorage),
+      partialize: (state) => {
+        const { isOpenSideBar, toggleOpenSideBar, ...rest } = state;
+        return rest;
+      },
+      merge: (persisted, current) => {
+        const {
+          isOpenSideBar: _ignore1,
+          toggleOpenSideBar: _ignore2,
+          ...rest
+        } = (persisted ?? {}) as Partial<ReaderState>;
+        return { ...current, ...rest };
+      },
     }
   )
 );
