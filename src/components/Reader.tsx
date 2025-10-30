@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
-import type { Book, Chapter } from "../mock/books";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useReaderStore } from "../store/readerStore";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { toKhmerNumber } from "../utils/toKhmerNumber";
+import type { TBook, TChapter } from "../lib/api";
 
 type Props = {
-  book: Book;
+  book: TBook;
   chapterId: string;
   onOpenToc?: () => void;
 };
@@ -24,11 +25,9 @@ function splitParagraphIntoChunks(para: string, budget: number): string[] {
 
   while (i < text.length) {
     const end = Math.min(i + budget, text.length);
-
     const windowStart = i + Math.max(20, Math.floor(budget * 0.5));
     const searchFrom = Math.min(end, text.length - 1);
     const cutZoneStart = Math.min(windowStart, searchFrom);
-
     let cut = -1;
     for (let j = searchFrom; j >= cutZoneStart; j--) {
       const ch = text[j];
@@ -38,7 +37,6 @@ function splitParagraphIntoChunks(para: string, budget: number): string[] {
       }
     }
     if (cut === -1) cut = end;
-
     out.push(text.slice(i, cut).trim());
     i = cut;
   }
@@ -75,24 +73,31 @@ function paginateByCharBudget(paragraphs: string[], budget: number): string[][] 
 export default function Reader({ book, chapterId, onOpenToc }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const params = useMemo(() => new URLSearchParams(location.search), [location.search]);
+
   const savePage = useReaderStore((s) => s.savePage);
   const saveLocation = useReaderStore((s) => s.saveLocation);
   const getLocation = useReaderStore((s) => s.getLocation);
   const setCurrent = useReaderStore((s) => s.setCurrent);
+  const fontSize = useReaderStore((s) => s.fontSize);
 
-  const fontSize = useReaderStore(s => s.fontSize)
-
-  const chapter: Chapter | undefined = useMemo(
-    () => book.chapters.find((c) => c.id === chapterId),
+  const queryPage = Number(params.get("page")) || 1;
+  // const  book = tbook.filter(b => b.id === 4)[0]
+  const chapter: TChapter | undefined = useMemo(
+    () => book.chapters?.find((c) => c.id.toString() == chapterId),
     [book.chapters, chapterId]
   );
-
-  
+  console.log(chapterId)
+  console.log(book.chapters)
   const initialSavedPage = useMemo(() => {
     if (!chapter) return 0;
-    const saved = getLocation(book.id, chapter.id);
-    return Math.max(0, saved?.page ?? 0);
-  }, [book.id, chapter?.id, getLocation]);
+    const saved = getLocation(book.id.toString(), chapter.id.toString());
+    const fromQuery = queryPage > 0 ? queryPage - 1 : null;
+    return fromQuery ?? Math.max(0, saved?.page ?? 0);
+  }, [book.id, chapter?.id, getLocation, queryPage]);
 
   const [isEditing, setIsEditing] = useState(false);
   const [pages, setPages] = useState<string[][]>([]);
@@ -100,21 +105,36 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
   const [pageInput, setPageInput] = useState<string>(String(initialSavedPage + 1));
   const restoredOnce = useRef(false);
 
+  const updateUrl = useCallback(
+    (page: number) => {
+      const params = new URLSearchParams(location.search);
+      params.set("chapter_id", chapterId);
+      params.set("page", String(page + 1));
+      navigate({ search: params.toString() }, { replace: true });
+    },
+    [navigate, location.search, chapterId]
+  );
+
   useEffect(() => {
-    if (chapter) setCurrent(book.id, chapter.id);
+    if (chapter) setCurrent(book.id.toString(), chapter.id.toString());
   }, [book.id, chapter?.id, setCurrent]);
 
-  const recomputePages = useCallback(() => {
-    if (!chapter) {
-      setPages([]);
-      return;
-    }
-    const normalized = chapter.content.flatMap((p) =>
-      p.includes("\n\n") ? p.split(/\n{2,}/).map((s) => s.trim()).filter(Boolean) : [p]
-    );
-    const next = paginateByCharBudget(normalized, CHARS_PER_PAGE);
-    setPages(next);
-  }, [chapter]);
+const recomputePages = useCallback(() => {
+  if (!chapter) {
+    setPages([]);
+    return;
+  }
+
+  const normalized = chapter.paragraphs.flatMap((p) =>
+    p.content.includes("\n\n")
+      ? p.content.split(/\n{2,}/).map((s) => s.trim()).filter(Boolean)
+      : [p.content.trim()]
+  );
+
+  const next = paginateByCharBudget(normalized, CHARS_PER_PAGE);
+  setPages(next);
+}, [chapter]);
+
 
   useEffect(() => {
     recomputePages();
@@ -126,13 +146,14 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
 
   useEffect(() => {
     if (!chapter || restoredOnce.current || pages.length === 0) return;
-    const saved = getLocation(book.id, chapter.id);
+    const saved = getLocation(book.id.toString(), chapter.id.toString());
     const safe = Math.max(0, Math.min(saved?.page ?? initialSavedPage, pages.length - 1));
     setPageIdx(safe);
     setPageInput(String(safe + 1));
     restoredOnce.current = true;
     containerRef.current?.scrollTo({ top: 0 });
-  }, [book.id, chapter?.id, pages.length, getLocation, initialSavedPage]);
+    updateUrl(safe);
+  }, [book.id, chapter?.id, pages.length, getLocation, initialSavedPage, updateUrl]);
 
   useEffect(() => {
     setPageInput(String(pageIdx + 1));
@@ -140,23 +161,22 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
 
   useEffect(() => {
     if (!chapter) return;
-    savePage(book.id, chapter.id, pageIdx);
-  }, [book.id, chapter?.id, pageIdx, savePage]);
+    savePage(book.id.toString(), chapter.id.toString(), pageIdx);
+    updateUrl(pageIdx);
+  }, [book.id, chapter?.id, pageIdx, savePage, updateUrl]);
 
   useEffect(() => {
     const el = containerRef.current;
     if (!el || !chapter || !restoredOnce.current) return;
-
     let ticking = false;
     const onScroll = () => {
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
-        saveLocation(book.id, chapter.id, el.scrollTop);
+        saveLocation(book.id.toString(), chapter.id.toString(), el.scrollTop);
         ticking = false;
       });
     };
-
     el.addEventListener("scroll", onScroll, { passive: true });
     return () => el.removeEventListener("scroll", onScroll);
   }, [book.id, chapter?.id, saveLocation, restoredOnce.current]);
@@ -179,9 +199,11 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
     setPageInput(String(clamped));
     containerRef.current?.scrollTo({ top: 0 });
     setIsEditing(false);
-  }; 
+    updateUrl(idx);
+  };
+
   return (
-    <section className="flex h-screen flex-col overflow-hidden bg-[rgb(var(--card))] relative ">
+    <section className="flex h-screen flex-col overflow-hidden bg-[rgb(var(--card))] relative">
       <header className="sticky top-0 z-20 backdrop-blur border-b border-slate-200 px-3 py-3 sm:px-6">
         <div className="flex items-center gap-3">
           <button
@@ -240,10 +262,7 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
         </div>
       </header>
 
-      <div
-        ref={containerRef}
-        className="flex-1 overflow-y-auto px-4 py-5 sm:px-6 md:px-10 no-scrollbar"
-      >
+      <div ref={containerRef} className="flex-1 overflow-y-auto px-4 py-5 sm:px-6 md:px-10 no-scrollbar">
         <article
           className="mx-auto max-w-3xl text-[1.05rem] sm:text-lg leading-relaxed"
           style={{
@@ -257,7 +276,7 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
               {segment}
             </p>
           ))}
-          <div className="h-[70px]"/>
+          <div className="h-[70px]" />
         </article>
       </div>
 
@@ -265,7 +284,11 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
         <div className="flex items-center justify-between gap-4">
           <button
             onClick={() => {
-              setPageIdx((p) => Math.max(0, p - 1));
+              setPageIdx((p) => {
+                const next = Math.max(0, p - 1);
+                updateUrl(next);
+                return next;
+              });
               containerRef.current?.scrollTo({ top: 0 });
               setIsEditing(false);
             }}
@@ -282,7 +305,11 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
 
           <button
             onClick={() => {
-              setPageIdx((p) => Math.min(totalPages - 1, p + 1));
+              setPageIdx((p) => {
+                const next = Math.min(totalPages - 1, p + 1);
+                updateUrl(next);
+                return next;
+              });
               containerRef.current?.scrollTo({ top: 0 });
               setIsEditing(false);
             }}

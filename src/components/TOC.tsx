@@ -1,14 +1,12 @@
-import type { Book } from "../mock/books";
+import type { TBook } from "../lib/api";
 import { toKhmerNumber } from "../utils/toKhmerNumber";
 import FontSizeController from "./FontSizeController";
 import ThemeSwitcher from "./ThemeSwitcher";
 
 type Props = {
-  book: Book;
+  book: TBook;
   currentChapterId: string | null;
   onOpenChapter: (chapterId: string) => void;
-  onContinue: () => void;
-  onReset: () => void;
   onClose?: () => void;
 };
 
@@ -41,16 +39,16 @@ export default function TOC({
       </div>
 
       <h3 className="my-4 text-base font-semibold text-[rgb(var(--text))]">
-        ទាំងអស់មាន{toKhmerNumber(book.chapters.length)}ជំពូក
+        ទាំងអស់មាន{toKhmerNumber(book.chapters?.length)}ជំពូក
       </h3>
 
       <ol className="flex-1 list-none gap-2 p-0 m-0 overflow-y-auto flex flex-col pr-2 no-scrollbar">
-        {book.chapters.map((ch, idx) => {
-          const active = currentChapterId === ch.id;
+        {book.chapters?.map((ch, idx) => {
+          const active = currentChapterId === ch.id.toString();
           return (
             <li key={ch.id}>
               <button
-                onClick={() => onOpenChapter(ch.id)}
+                onClick={() => onOpenChapter(ch.id.toString())}
                 className={`w-full text-left px-3 py-2.5 rounded-lg border transition-all duration-200 flex items-center gap-2 ${
                   active
                     ? "bg-[rgb(var(--accent))] border-[rgb(var(--accent))] text-[rgb(var(--bg))]"
