@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback, } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useReaderStore } from "../store/readerStore";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { toKhmerNumber } from "../utils/toKhmerNumber";
 import type { TBook, TChapter } from "../lib/api";
-
+import cover from "/book-cover.jpg";
 type Props = {
   book: TBook;
   chapterId: string;
@@ -179,7 +179,6 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
     return () => el.removeEventListener("scroll", onScroll);
   }, [book?.id, chapter?.id, saveLocation, restoredOnce.current]);
 
-  if (!chapter) return <div className="p-6">Chapter not found.</div>;
 
   const totalPages = Math.max(1, pages.length);
   const pageSafe = Math.min(pageIdx, totalPages - 1);
@@ -212,8 +211,8 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
             ☰
           </button>
           <div className="min-w-0 flex-1">
-            <div className="text-xs sm:text-sm text-slate-500 truncate">{book.title}</div>
-            <h1 className="mt-0.5 text-base font-semibold sm:text-xl truncate text">{chapter.title}</h1>
+            <div className="text-xs sm:text-sm text-slate-500 truncate">{book.title || ""}</div>
+            <h1 className="mt-0.5 text-base font-semibold sm:text-xl truncate text">{chapter?.title || ""}</h1>
           </div>
           <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text">
             <span onClick={() => setIsEditing((v) => !v)}>
@@ -259,66 +258,66 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
           </div>
         </div>
       </header>
-
-      <div ref={containerRef} className="flex-1 overflow-y-auto px-4 py-5 sm:px-6 md:px-10 no-scrollbar">
-        <article
-          className="mx-auto max-w-3xl text-[1.05rem] sm:text-lg leading-relaxed"
-          style={{
-            whiteSpace: "normal",
-            wordBreak: "break-word",
-            overflowWrap: "anywhere" as any,
-          }}
-        >
-          {currentPageContent.map((segment, i) => (
-            <p key={i} className={`mb-5 text-[rgb(var(--text))]`} style={{ fontSize: `${fontSize}px` }}>
-              {segment}
-            </p>
-          ))}
-          <div className="h-[70px]" />
-        </article>
-      </div>
-
-      <footer className="border-t px-4 py-4 sm:px-6 md:absolute fixed bottom-0 left-0 right-0 bg-[rgb(var(--card))]">
-        <div className="flex items-center justify-between gap-4">
-          <button
-            onClick={() => {
-              setPageIdx((p) => {
-                const next = Math.max(0, p - 1);
-                updateUrl(next);
-                return next;
-              });
-              containerRef.current?.scrollTo({ top: 0 });
-              setIsEditing(false);
+      {!chapter && <main className="mx-auto no-scrollbar py-4 max-w-3xl overflow-y-auto"><img src={cover} /></main>}
+      {chapter && <>
+        <div ref={containerRef} className="flex-1 overflow-y-auto px-4 py-5 sm:px-6 md:px-10 no-scrollbar">
+          <article
+            className="mx-auto max-w-3xl text-[1.05rem] sm:text-lg leading-relaxed"
+            style={{
+              whiteSpace: "normal",
+              wordBreak: "break-word",
+              overflowWrap: "anywhere" as any,
             }}
-            disabled={pageSafe === 0}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition"
           >
-            <ChevronLeft size={18} />
-            <span className="text-sm font-medium">ថយ</span>
-          </button>
-
-          <div className="text-sm text-slate-600">
-            {toKhmerNumber(pageSafe + 1)} / {toKhmerNumber(totalPages)}
-          </div>
-
-          <button
-            onClick={() => {
-              setPageIdx((p) => {
-                const next = Math.min(totalPages - 1, p + 1);
-                updateUrl(next);
-                return next;
-              });
-              containerRef.current?.scrollTo({ top: 0 });
-              setIsEditing(false);
-            }}
-            disabled={pageSafe >= totalPages - 1}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition"
-          >
-            <span className="text-sm font-medium">បន្ទាប់</span>
-            <ChevronRight size={18} />
-          </button>
+            {currentPageContent.map((segment, i) => (
+              <p key={i} className={`mb-5 text-[rgb(var(--text))]`} style={{ fontSize: `${fontSize}px` }}>
+                {segment}
+              </p>
+            ))}
+            <div className="h-[70px]" />
+          </article>
         </div>
-      </footer>
+        <footer className="border-t px-4 py-4 sm:px-6 md:absolute fixed bottom-0 left-0 right-0 bg-[rgb(var(--card))]">
+          <div className="flex items-center justify-between gap-4">
+            <button
+              onClick={() => {
+                setPageIdx((p) => {
+                  const next = Math.max(0, p - 1);
+                  updateUrl(next);
+                  return next;
+                });
+                containerRef.current?.scrollTo({ top: 0 });
+                setIsEditing(false);
+              }}
+              disabled={pageSafe === 0}
+              className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            >
+              <ChevronLeft size={18} />
+              <span className="text-sm font-medium">ថយ</span>
+            </button>
+
+            <div className="text-sm text-slate-600">
+              {toKhmerNumber(pageSafe + 1)} / {toKhmerNumber(totalPages)}
+            </div>
+
+            <button
+              onClick={() => {
+                setPageIdx((p) => {
+                  const next = Math.min(totalPages - 1, p + 1);
+                  updateUrl(next);
+                  return next;
+                });
+                containerRef.current?.scrollTo({ top: 0 });
+                setIsEditing(false);
+              }}
+              disabled={pageSafe >= totalPages - 1}
+              className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            >
+              <span className="text-sm font-medium">បន្ទាប់</span>
+              <ChevronRight size={18} />
+            </button>
+          </div>
+        </footer></>}
     </section>
   );
 }

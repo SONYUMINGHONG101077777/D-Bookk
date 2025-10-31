@@ -30,7 +30,7 @@ type ReaderState = {
 
   locations: Record<string, Location>;
 
-  setCurrent: (bookId: string, chapterId: string) => void;
+  setCurrent: (bookId: string | null, chapterId: string | null) => void;
 
   saveLocation: (bookId: string, chapterId: string, scrollTop: number) => void;
 

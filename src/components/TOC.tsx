@@ -1,7 +1,9 @@
+import { useSearchParams } from "react-router-dom";
 import type { TBook } from "../lib/api";
 import { toKhmerNumber } from "../utils/toKhmerNumber";
 import FontSizeController from "./FontSizeController";
 import ThemeSwitcher from "./ThemeSwitcher";
+import { useReaderStore } from "../store/readerStore";
 
 type Props = {
   book: TBook;
@@ -16,10 +18,21 @@ export default function TOC({
   onOpenChapter,
   onClose,
 }: Props) {
+  const setParams = useSearchParams()[1]
+  const setCurrent = useReaderStore(s => s.setCurrent)
+  const onBackHome = () => {
+    setParams(new URLSearchParams(), { replace: true });
+    setCurrent(book?.id.toString(), "");
+    window.location.reload()
+  };
   return (
     <aside className={`w-full relative md:w-80 md:flex-none border-r border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4 sm:p-6 h-full overflow-hidden flex flex-col`}>
-      <div className="mb-4 flex items-center justify-between md:hidden pb-4 border-b border-[rgb(var(--border))]">
-        <h2 className="text-2xl font-bold text-[rgb(var(--text))]">{book?.title}</h2>
+      <div className="mb-4 flex items-center justify-between md:hidden pb-4 border-b border-[rgb(var(--border))] ">
+        <span className="flex flex-col hover:bg-black/15 px-2 py-2 rounded-md cursor-default" onClick={onBackHome}>
+          <h2 className="text-2xl font-bold text-[rgb(var(--text))]">{book?.title}</h2>
+          {book?.author && (
+            <p className="m-0 text-sm text-[rgb(var(--muted))]">{book?.author}</p>
+          )}</span>
         <button
           onClick={onClose}
           className="rounded-lg border border-[rgb(var(--border))] px-2.5 py-1.5 text-sm transition-colors hover:bg-[rgb(var(--border))] text-[rgb(var(--text))]"
@@ -29,7 +42,7 @@ export default function TOC({
         </button>
       </div>
 
-      <div className="hidden md:block mb-6">
+      <div className="hidden md:block mb-6 " onClick={onBackHome}>
         <h2 className="m-0 text-xl font-bold text-[rgb(var(--text))] mb-1">
           {book?.title}
         </h2>
@@ -49,11 +62,10 @@ export default function TOC({
             <li key={ch.id}>
               <button
                 onClick={() => onOpenChapter(ch.id.toString())}
-                className={`w-full text-left px-3 py-2.5 rounded-lg border transition-all duration-200 flex items-center gap-2 ${
-                  active
-                    ? "bg-[rgb(var(--accent))] border-[rgb(var(--accent))] text-[rgb(var(--bg))]"
-                    : "border-[rgb(var(--border))] text-[rgb(var(--text))] hover:border-[rgb(var(--accent))] hover:bg-[rgb(var(--card))]"
-                }`}
+                className={`w-full text-left px-3 py-2.5 rounded-lg border transition-all duration-200 flex items-center gap-2 ${active
+                  ? "bg-[rgb(var(--accent))] border-[rgb(var(--accent))] text-[rgb(var(--bg))]"
+                  : "border-[rgb(var(--border))] text-[rgb(var(--text))] hover:border-[rgb(var(--accent))] hover:bg-[rgb(var(--card))]"
+                  }`}
                 title={`បើក ${ch.title}`}
               >
                 <span className="font-semibold whitespace-nowrap flex-shrink-0">
