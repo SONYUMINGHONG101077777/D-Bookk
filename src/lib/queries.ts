@@ -6,6 +6,10 @@ export const useBook = () => {
     queryKey: ["book"],
     queryFn: () => fetchAllBooks(),
     staleTime: 5 * 60_000,
+    gcTime: 10 * 60_000,
+    refetchOnMount: false, 
+    refetchOnWindowFocus: false, 
+    refetchOnReconnect: false, 
   });
 };
 

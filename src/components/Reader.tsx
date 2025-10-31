@@ -211,10 +211,10 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
             ☰
           </button>
           <div className="min-w-0 flex-1">
-            <div className="text-xs sm:text-sm text-slate-500 truncate">{book.title || ""}</div>
+            <div className={`text-xs sm:text-sm text-gray-400 truncate ${!chapter && "text-lg"}`}>{book?.title || ""}</div>
             <h1 className="mt-0.5 text-base font-semibold sm:text-xl truncate text">{chapter?.title || ""}</h1>
           </div>
-          <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text">
+          {chapter && <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text">
             <span onClick={() => setIsEditing((v) => !v)}>
               ទំព័រ {toKhmerNumber(pageSafe + 1)}/{toKhmerNumber(totalPages)}
             </span>
@@ -255,7 +255,7 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
                 </button>
               </form>
             )}
-          </div>
+          </div>}
         </div>
       </header>
       {!chapter && <main className="mx-auto no-scrollbar py-4 max-w-3xl overflow-y-auto"><img src={cover} /></main>}

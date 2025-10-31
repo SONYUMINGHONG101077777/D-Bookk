@@ -14,7 +14,6 @@ export default function LoadingModal({ isLoading }: { isLoading: boolean }) {
       interval = setInterval(() => {
         setProgress((prev) => {
           if (prev < 95) {
-            // smoother ramp-up curve
             const increment = Math.random() * 5;
             return Math.min(prev + increment, 95);
           }
@@ -32,7 +31,6 @@ export default function LoadingModal({ isLoading }: { isLoading: boolean }) {
   }, [isLoading]);
 
   if (!visible) return null;
-
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="flex flex-col items-center justify-center rounded-2xl p-8 shadow-xl min-w-[320px] transition-all">
