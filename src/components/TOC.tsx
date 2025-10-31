@@ -19,7 +19,7 @@ export default function TOC({
   return (
     <aside className={`w-full relative md:w-80 md:flex-none border-r border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4 sm:p-6 h-full overflow-hidden flex flex-col`}>
       <div className="mb-4 flex items-center justify-between md:hidden pb-4 border-b border-[rgb(var(--border))]">
-        <h2 className="text-2xl font-bold text-[rgb(var(--text))]">{book.title}</h2>
+        <h2 className="text-2xl font-bold text-[rgb(var(--text))]">{book?.title}</h2>
         <button
           onClick={onClose}
           className="rounded-lg border border-[rgb(var(--border))] px-2.5 py-1.5 text-sm transition-colors hover:bg-[rgb(var(--border))] text-[rgb(var(--text))]"
@@ -31,19 +31,19 @@ export default function TOC({
 
       <div className="hidden md:block mb-6">
         <h2 className="m-0 text-xl font-bold text-[rgb(var(--text))] mb-1">
-          {book.title}
+          {book?.title}
         </h2>
-        {book.author && (
-          <p className="m-0 text-sm text-[rgb(var(--muted))]">{book.author}</p>
+        {book?.author && (
+          <p className="m-0 text-sm text-[rgb(var(--muted))]">{book?.author}</p>
         )}
       </div>
 
       <h3 className="my-4 text-base font-semibold text-[rgb(var(--text))]">
-        ទាំងអស់មាន{toKhmerNumber(book.chapters?.length)}ជំពូក
+        ទាំងអស់មាន{toKhmerNumber(book?.chapters?.length)}ជំពូក
       </h3>
 
       <ol className="flex-1 list-none gap-2 p-0 m-0 overflow-y-auto flex flex-col pr-2 no-scrollbar">
-        {book.chapters?.map((ch, idx) => {
+        {book?.chapters?.map((ch, idx) => {
           const active = currentChapterId === ch.id.toString();
           return (
             <li key={ch.id}>

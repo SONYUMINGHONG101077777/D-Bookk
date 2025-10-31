@@ -38,3 +38,7 @@ export const fetchAllBooks = async () => {
   if (!res.ok) throw new Error("Failed to fetch all words");
   return res.json() as Promise<BaseResponse<TBook[]>>;
 };
+export const fetchOneChapterById = async (id: string) => {
+    const res = await fetch(BASE + "/beydok/chapter/" + id)
+    return res.json() as Promise<TChapter>
+}

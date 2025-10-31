@@ -5,6 +5,7 @@ import { useReaderStore } from "./store/readerStore";
 import Reader from "./components/Reader";
 import { useBook } from "./lib/queries";
 import type { TBook } from "./lib/api";
+import LoadingModal from "./components/shared/LoadingModal";
 
 const App = () => {
   const currentBookId = useReaderStore((s) => s.currentBookId);
@@ -14,7 +15,7 @@ const App = () => {
 
   const [tocOpen, setTocOpen] = useState(false);
 
-  const {data, isLoading} = useBook()
+  const { data, isLoading } = useBook()
   const book = data?.data[0]
   useEffect(() => {
     if (!currentBookId || !currentChapterId) {
@@ -33,9 +34,8 @@ const App = () => {
     setCurrent(book?.id.toString() || "", chapterId);
     setTocOpen(false);
   };
-
-  if(!isLoading)
-  return (
+  if (!isLoading)
+    return (
       <div className="relative flex h-[100dvh] bg-white text-slate-900">
         <div className={"hidden md:block"}>
           <TOC
@@ -71,6 +71,8 @@ const App = () => {
           <Reader book={book as TBook} chapterId={shownChapterId?.toString() || ""} onOpenToc={() => setTocOpen(true)} />
         </div>
       </div>
-  );
-};
+    )
+  return <LoadingModal isLoading={isLoading}/>
+}
+  ;
 export default App;

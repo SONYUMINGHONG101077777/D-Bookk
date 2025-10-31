@@ -85,19 +85,17 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
   const fontSize = useReaderStore((s) => s.fontSize);
 
   const queryPage = Number(params.get("page")) || 1;
-  // const  book = tbook.filter(b => b.id === 4)[0]
+
   const chapter: TChapter | undefined = useMemo(
-    () => book.chapters?.find((c) => c.id.toString() == chapterId),
-    [book.chapters, chapterId]
+    () => book?.chapters?.find((c) => c.id.toString() == chapterId),
+    [book?.chapters, chapterId]
   );
-  console.log(chapterId)
-  console.log(book.chapters)
   const initialSavedPage = useMemo(() => {
     if (!chapter) return 0;
-    const saved = getLocation(book.id.toString(), chapter.id.toString());
+    const saved = getLocation(book?.id.toString(), chapter.id.toString());
     const fromQuery = queryPage > 0 ? queryPage - 1 : null;
     return fromQuery ?? Math.max(0, saved?.page ?? 0);
-  }, [book.id, chapter?.id, getLocation, queryPage]);
+  }, [book?.id, chapter?.id, getLocation, queryPage]);
 
   const [isEditing, setIsEditing] = useState(false);
   const [pages, setPages] = useState<string[][]>([]);
@@ -116,24 +114,24 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
   );
 
   useEffect(() => {
-    if (chapter) setCurrent(book.id.toString(), chapter.id.toString());
-  }, [book.id, chapter?.id, setCurrent]);
+    if (chapter) setCurrent(book?.id.toString(), chapter.id.toString());
+  }, [book?.id, chapter?.id, setCurrent]);
 
-const recomputePages = useCallback(() => {
-  if (!chapter) {
-    setPages([]);
-    return;
-  }
+  const recomputePages = useCallback(() => {
+    if (!chapter) {
+      setPages([]);
+      return;
+    }
 
-  const normalized = chapter.paragraphs.flatMap((p) =>
-    p.content.includes("\n\n")
-      ? p.content.split(/\n{2,}/).map((s) => s.trim()).filter(Boolean)
-      : [p.content.trim()]
-  );
+    const normalized = chapter.paragraphs.flatMap((p) =>
+      p.content.includes("\n\n")
+        ? p.content.split(/\n{2,}/).map((s) => s.trim()).filter(Boolean)
+        : [p.content.trim()]
+    );
 
-  const next = paginateByCharBudget(normalized, CHARS_PER_PAGE);
-  setPages(next);
-}, [chapter]);
+    const next = paginateByCharBudget(normalized, CHARS_PER_PAGE);
+    setPages(next);
+  }, [chapter]);
 
 
   useEffect(() => {
@@ -142,18 +140,18 @@ const recomputePages = useCallback(() => {
 
   useEffect(() => {
     restoredOnce.current = false;
-  }, [book.id, chapterId]);
+  }, [book?.id, chapterId]);
 
   useEffect(() => {
     if (!chapter || restoredOnce.current || pages.length === 0) return;
-    const saved = getLocation(book.id.toString(), chapter.id.toString());
+    const saved = getLocation(book?.id.toString(), chapter.id.toString());
     const safe = Math.max(0, Math.min(saved?.page ?? initialSavedPage, pages.length - 1));
     setPageIdx(safe);
     setPageInput(String(safe + 1));
     restoredOnce.current = true;
     containerRef.current?.scrollTo({ top: 0 });
     updateUrl(safe);
-  }, [book.id, chapter?.id, pages.length, getLocation, initialSavedPage, updateUrl]);
+  }, [book?.id, chapter?.id, pages.length, getLocation, initialSavedPage, updateUrl]);
 
   useEffect(() => {
     setPageInput(String(pageIdx + 1));
@@ -161,9 +159,9 @@ const recomputePages = useCallback(() => {
 
   useEffect(() => {
     if (!chapter) return;
-    savePage(book.id.toString(), chapter.id.toString(), pageIdx);
+    savePage(book?.id.toString(), chapter.id.toString(), pageIdx);
     updateUrl(pageIdx);
-  }, [book.id, chapter?.id, pageIdx, savePage, updateUrl]);
+  }, [book?.id, chapter?.id, pageIdx, savePage, updateUrl]);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -173,13 +171,13 @@ const recomputePages = useCallback(() => {
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
-        saveLocation(book.id.toString(), chapter.id.toString(), el.scrollTop);
+        saveLocation(book?.id.toString(), chapter.id.toString(), el.scrollTop);
         ticking = false;
       });
     };
     el.addEventListener("scroll", onScroll, { passive: true });
     return () => el.removeEventListener("scroll", onScroll);
-  }, [book.id, chapter?.id, saveLocation, restoredOnce.current]);
+  }, [book?.id, chapter?.id, saveLocation, restoredOnce.current]);
 
   if (!chapter) return <div className="p-6">Chapter not found.</div>;
 

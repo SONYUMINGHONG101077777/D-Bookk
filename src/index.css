@@ -16,7 +16,7 @@ body,
 body {
   margin: 0;
   font-family: Inter, "Noto Sans Khmer", system-ui, -apple-system, Segoe UI,
-    Roboto, Arial, "Helvetica Neue", sans-serif;
+  Roboto, Arial, "Helvetica Neue", sans-serif;
   background: #fff;
 }
 button:focus-visible {

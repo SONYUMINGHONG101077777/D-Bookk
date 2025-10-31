@@ -21,7 +21,8 @@ type CurrentPosition = {
 type ReaderState = {
   currentBookId: string | null;
   currentChapterId: string | null;
-
+  setProgressPercent?: (progress: number) => void;
+  progressPercent: number;
   isOpenSideBar: boolean;
   toggleOpenSideBar: MouseEventHandler<HTMLButtonElement>;
 
@@ -88,6 +89,9 @@ export const useReaderStore = create<ReaderState>()(
             },
           };
         }),
+      progressPercent: 0,
+      onDownloadProgress: (percent: number) =>
+        set({ progressPercent: percent }),
 
       saveLocation: (bookId, chapterId, scrollTop) =>
         set((s) => {
