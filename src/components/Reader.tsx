@@ -3,14 +3,17 @@
 import { useEffect, useMemo, useRef, useState, useCallback, } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useReaderStore } from "../store/readerStore";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, RefreshCcw } from "lucide-react";
 import { toKhmerNumber } from "../utils/toKhmerNumber";
 import type { TBook, TChapter } from "../lib/api";
 import cover from "/book-cover.jpg";
+import LoadingModal from "./shared/LoadingModal";
 type Props = {
   book: TBook;
   chapterId: string;
   onOpenToc?: () => void;
+  refetch: () => void;
+  isRefetching: boolean
 };
 
 const CHARS_PER_PAGE = 3500;
@@ -70,7 +73,7 @@ function paginateByCharBudget(paragraphs: string[], budget: number): string[][] 
   return pages.length ? pages : [[]];
 }
 
-export default function Reader({ book, chapterId, onOpenToc }: Props) {
+export default function Reader({ book, chapterId, onOpenToc, refetch, isRefetching }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const navigate = useNavigate();
@@ -202,6 +205,7 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
   return (
     <section className="flex h-screen flex-col overflow-hidden bg-[rgb(var(--card))] relative">
       <header className="sticky top-0 z-20 backdrop-blur border-b border-slate-200 px-3 py-3 sm:px-6">
+
         <div className="flex items-center gap-3">
           <button
             onClick={onOpenToc}
@@ -214,48 +218,52 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
             <div className={`text-xs sm:text-sm text-gray-400 truncate ${!chapter && "text-lg"}`}>{book?.title || ""}</div>
             <h1 className="mt-0.5 text-base font-semibold sm:text-xl truncate text">{chapter?.title || ""}</h1>
           </div>
-          {chapter && <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text">
-            <span onClick={() => setIsEditing((v) => !v)}>
-              ទំព័រ {toKhmerNumber(pageSafe + 1)}/{toKhmerNumber(totalPages)}
-            </span>
-            {isEditing && (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  const n = parseInt(pageInput || "1", 10);
-                  jumpToPage(isNaN(n) ? 1 : n);
-                }}
-                className="flex items-center gap-2"
-              >
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  min={1}
-                  max={totalPages}
-                  value={pageInput}
-                  onChange={(e) => {
-                    const v = (e.target.value ?? "").replace(/[^\d]/g, "");
-                    setPageInput(v);
+          <span className="flex gap-2">
+            <button onClick={() => refetch()}><RefreshCcw size={17} className="text" /></button>
+            {chapter && <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text">
+              <span onClick={() => setIsEditing((v) => !v)}>
+                ទំព័រ {toKhmerNumber(pageSafe + 1)}/{toKhmerNumber(totalPages)}
+              </span>
+              {isEditing && (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const n = parseInt(pageInput || "1", 10);
+                    jumpToPage(isNaN(n) ? 1 : n);
                   }}
-                  onBlur={(e) => {
-                    const n = parseInt(e.currentTarget.value || "1", 10);
-                    const clamped = clampPageNumber(isNaN(n) ? 1 : n);
-                    setPageInput(String(clamped));
-                  }}
-                  onFocus={(e) => e.currentTarget.select()}
-                  className="w-16 rounded-md border border-slate-300  px-2 py-1 text-sm text-slate-900"
-                  aria-label="Go to page"
-                  title={`Enter a page number (1–${totalPages})`}
-                />
-                <button
-                  type="submit"
-                  className="rounded-md border border-slate-300 bg-slate-100 px-3 py-1.5 text-sm hover:bg-slate-200"
+                  className="flex items-center gap-2"
                 >
-                  ទៅ
-                </button>
-              </form>
-            )}
-          </div>}
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min={1}
+                    max={totalPages}
+                    value={pageInput}
+                    onChange={(e) => {
+                      const v = (e.target.value ?? "").replace(/[^\d]/g, "");
+                      setPageInput(v);
+                    }}
+                    onBlur={(e) => {
+                      const n = parseInt(e.currentTarget.value || "1", 10);
+                      const clamped = clampPageNumber(isNaN(n) ? 1 : n);
+                      setPageInput(String(clamped));
+                    }}
+                    onFocus={(e) => e.currentTarget.select()}
+                    className="w-16 rounded-md border border-slate-300  px-2 py-1 text-sm text-slate-900"
+                    aria-label="Go to page"
+                    title={`Enter a page number (1–${totalPages})`}
+                  />
+                  <button
+                    type="submit"
+                    className="rounded-md border border-slate-300 bg-slate-100 px-3 py-1.5 text-sm hover:bg-slate-200"
+                  >
+                    ទៅ
+                  </button>
+                </form>
+              )}
+            </div>}
+          </span>
+
         </div>
       </header>
       {!chapter && <main className="mx-auto no-scrollbar py-4 max-w-3xl overflow-y-auto"><img src={cover} /></main>}
@@ -269,12 +277,14 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
               overflowWrap: "anywhere" as any,
             }}
           >
+            {isRefetching && <LoadingModal isLoading={isRefetching} />}
             {currentPageContent.map((segment, i) => (
               <p key={i} className={`mb-5 text-[rgb(var(--text))]`} style={{ fontSize: `${fontSize}px` }}>
                 {segment}
               </p>
             ))}
             <div className="h-[70px]" />
+
           </article>
         </div>
         <footer className="border-t px-4 py-4 sm:px-6 md:absolute fixed bottom-0 left-0 right-0 bg-[rgb(var(--card))]">
@@ -321,3 +331,4 @@ export default function Reader({ book, chapterId, onOpenToc }: Props) {
     </section>
   );
 }
+

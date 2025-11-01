@@ -15,7 +15,7 @@ const App = () => {
 
   const [tocOpen, setTocOpen] = useState(false);
 
-  const { data, isLoading } = useBook()
+  const { data, isLoading, refetch, isRefetching } = useBook()
   const book = data?.data[0]
   useEffect(() => {
     if (!currentBookId || !currentChapterId) {
@@ -68,7 +68,7 @@ const App = () => {
         )}
 
         <div className="flex-1 min-w-0">
-          <Reader book={book as TBook} chapterId={shownChapterId?.toString() || ""} onOpenToc={() => setTocOpen(true)} />
+          <Reader isRefetching={isRefetching} book={book as TBook} refetch={refetch} chapterId={shownChapterId?.toString() || ""} onOpenToc={() => setTocOpen(true)} />
         </div>
       </div>
     )
