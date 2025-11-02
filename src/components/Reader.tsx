@@ -7,6 +7,8 @@ import { ChevronLeft, ChevronRight, RefreshCcw } from "lucide-react";
 import { toKhmerNumber } from "../utils/toKhmerNumber";
 import type { TBook, TChapter } from "../lib/api";
 import cover from "/book-cover.jpg";
+// import LoadingModal from "./shared/LoadingModal";
+// import ReaderContent from "./ReaderContent";
 import LoadingModal from "./shared/LoadingModal";
 type Props = {
   book: TBook;
@@ -18,9 +20,41 @@ type Props = {
 
 const CHARS_PER_PAGE = 3500;
 
+// function splitParagraphIntoChunks(para: string, budget: number): string[] {
+//   if (!para) return [""];
+//   const text = para.replace(/\s+/g, " ").trimStart();
+//   if (text.length <= budget) return [text];
+
+//   const out: string[] = [];
+//   let i = 0;
+
+//   while (i < text.length) {
+//     const end = Math.min(i + budget, text.length);
+//     const windowStart = i + Math.max(20, Math.floor(budget * 0.5));
+//     const searchFrom = Math.min(end, text.length - 1);
+//     const cutZoneStart = Math.min(windowStart, searchFrom);
+//     let cut = -1;
+//     for (let j = searchFrom; j >= cutZoneStart; j--) {
+//       const ch = text[j];
+//       if (ch === " " || ch === "\n" || ch === "\t" || /[.!?។៕,、，;:]/.test(ch)) {
+//         cut = j + 1;
+//         break;
+//       }
+//     }
+//     if (cut === -1) cut = end;
+//     out.push(text.slice(i, cut).trim());
+//     i = cut;
+//   }
+
+//   return out.length ? out : [text];
+// }
+
 function splitParagraphIntoChunks(para: string, budget: number): string[] {
   if (!para) return [""];
-  const text = para.replace(/\s+/g, " ").trimStart();
+
+  // DON'T replace whitespace - preserve formatting
+  const text = para;
+
   if (text.length <= budget) return [text];
 
   const out: string[] = [];
@@ -32,20 +66,47 @@ function splitParagraphIntoChunks(para: string, budget: number): string[] {
     const searchFrom = Math.min(end, text.length - 1);
     const cutZoneStart = Math.min(windowStart, searchFrom);
     let cut = -1;
+
     for (let j = searchFrom; j >= cutZoneStart; j--) {
       const ch = text[j];
-      if (ch === " " || ch === "\n" || ch === "\t" || /[.!?។៕,、，;:]/.test(ch)) {
+      if (ch === "\n" || ch === " " || ch === "\t" || /[.!?។៕,、，;:]/.test(ch)) {
         cut = j + 1;
         break;
       }
     }
+
     if (cut === -1) cut = end;
-    out.push(text.slice(i, cut).trim());
+    out.push(text.slice(i, cut));
     i = cut;
   }
 
   return out.length ? out : [text];
 }
+// function paginateByCharBudget(paragraphs: string[], budget: number): string[][] {
+//   const pages: string[][] = [];
+//   let current: string[] = [];
+//   let used = 0;
+
+//   for (const raw of paragraphs) {
+//     const para = (raw ?? "").trim();
+//     if (!para) continue;
+
+//     const chunks = splitParagraphIntoChunks(para, budget);
+
+//     for (const chunk of chunks) {
+//       if (used + chunk.length > budget && current.length) {
+//         pages.push(current);
+//         current = [];
+//         used = 0;
+//       }
+//       current.push(chunk);
+//       used += chunk.length;
+//     }
+//   }
+
+//   if (current.length) pages.push(current);
+//   return pages.length ? pages : [[]];
+// }
 
 function paginateByCharBudget(paragraphs: string[], budget: number): string[][] {
   const pages: string[][] = [];
@@ -53,8 +114,9 @@ function paginateByCharBudget(paragraphs: string[], budget: number): string[][] 
   let used = 0;
 
   for (const raw of paragraphs) {
-    const para = (raw ?? "").trim();
-    if (!para) continue;
+    const para = raw ?? "";
+    // Skip only if completely empty, don't skip if it has spaces
+    if (para.length === 0) continue;
 
     const chunks = splitParagraphIntoChunks(para, budget);
 
@@ -115,28 +177,45 @@ export default function Reader({ book, chapterId, onOpenToc, refetch, isRefetchi
     },
     [navigate, location.search, chapterId]
   );
-
   useEffect(() => {
     if (chapter) setCurrent(book?.id.toString(), chapter.id.toString());
   }, [book?.id, chapter?.id, setCurrent]);
 
-  const recomputePages = useCallback(() => {
-    if (!chapter) {
-      setPages([]);
-      return;
-    }
+  // const recomputePages = useCallback(() => {
+  //   if (!chapter) {
+  //     setPages([]);
+  //     return;
+  //   }
 
-    const normalized = chapter.paragraphs.flatMap((p) =>
-      p.content.includes("\n\n")
-        ? p.content.split(/\n{2,}/).map((s) => s.trim()).filter(Boolean)
-        : [p.content.trim()]
-    );
+  //   const normalized = chapter.paragraphs.flatMap((p) =>
+  //     p.content.includes("\n\n")
+  //       ? p.content.split(/\n{2,}/).map((s) => s.trim()).filter(Boolean)
+  //       : [p.content.trim()]
+  //   );
 
-    const next = paginateByCharBudget(normalized, CHARS_PER_PAGE);
-    setPages(next);
-  }, [chapter]);
+  //   const next = paginateByCharBudget(normalized, CHARS_PER_PAGE);
+  //   setPages(next);
+  // }, [chapter]);
 
+const recomputePages = useCallback(() => {
+  if (!chapter) {
+    setPages([]);
+    return;
+  }
 
+  const normalized = chapter.paragraphs.flatMap((p) => {
+    // Normalize line endings: \r\n -> \n
+    const content = p.content.replace(/\r\n/g, '\n');
+    
+    // Split on double newlines but DON'T trim to keep indentation
+    return content.includes("\n\n")
+      ? content.split(/\n{2,}/).filter(s => s.length > 0) // Don't use trim()
+      : [content];
+  });
+
+  const next = paginateByCharBudget(normalized, CHARS_PER_PAGE);
+  setPages(next);
+}, [chapter]);
   useEffect(() => {
     recomputePages();
   }, [recomputePages]);
@@ -270,22 +349,29 @@ export default function Reader({ book, chapterId, onOpenToc, refetch, isRefetchi
       {chapter && <>
         <div ref={containerRef} className="flex-1 overflow-y-auto px-4 py-5 sm:px-6 md:px-10 no-scrollbar">
           <article
-            className="mx-auto max-w-3xl text-[1.05rem] sm:text-lg leading-relaxed"
-            style={{
-              whiteSpace: "normal",
-              wordBreak: "break-word",
-              overflowWrap: "anywhere" as any,
-            }}
+            className="mx-auto max-w-3xl text-[1.05rem] sm:text-lg leading-relaxed whitespace-break-spaces"
+          // style={{
+          //   // whiteSpace: "normal",
+          //   wordBreak: "break-word",
+          //   overflowWrap: "anywhere" as any,
+          // }}
+
           >
             {isRefetching && <LoadingModal isLoading={isRefetching} />}
             {currentPageContent.map((segment, i) => (
-              <p key={i} className={`mb-5 text-[rgb(var(--text))]`} style={{ fontSize: `${fontSize}px` }}>
+              <p key={i} className={`mb-5 text-[rgb(var(--text))]`} style={{
+                fontSize: `${fontSize}px`,
+                whiteSpace: 'pre-wrap', // Keep only this one
+                wordBreak: 'break-word',
+                textIndent: '2em'
+              }} >
                 {segment}
               </p>
             ))}
             <div className="h-[70px]" />
 
           </article>
+          {/* <ReaderContent content={currentPageContent} fontSize={fontSize} isRefetching={isRefetching}/> */}
         </div>
         <footer className="border-t px-4 py-4 sm:px-6 md:absolute fixed bottom-0 left-0 right-0 bg-[rgb(var(--card))]">
           <div className="flex items-center justify-between gap-4">

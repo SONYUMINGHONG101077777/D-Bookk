@@ -17,6 +17,7 @@ const App = () => {
 
   const { data, isLoading, refetch, isRefetching } = useBook()
   const book = data?.data[0]
+  console.table(book?.chapters)
   useEffect(() => {
     if (!currentBookId || !currentChapterId) {
       const first = book?.chapters[0].id;
