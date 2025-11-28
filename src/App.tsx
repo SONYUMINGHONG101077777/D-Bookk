@@ -25,7 +25,6 @@ const App = () => {
       setCurrent(book?.id.toString() || "", chapterId);
     }
   }, []);
-
   const shownChapterId = useMemo(
     () => currentChapterId ?? book?.chapters[0].id,
     [book?.chapters, currentChapterId]
