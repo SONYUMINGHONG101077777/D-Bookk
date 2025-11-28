@@ -4,6 +4,9 @@ import { toKhmerNumber } from "../utils/toKhmerNumber";
 import FontSizeController from "./FontSizeController";
 import ThemeSwitcher from "./ThemeSwitcher";
 import { useReaderStore } from "../store/readerStore";
+import { useState } from "react";
+import { Search } from "lucide-react"; 
+
 
 type Props = {
   book: TBook;
@@ -18,21 +21,41 @@ export default function TOC({
   onOpenChapter,
   onClose,
 }: Props) {
-  const setParams = useSearchParams()[1]
-  const setCurrent = useReaderStore(s => s.setCurrent)
+  const setParams = useSearchParams()[1];
+  const setCurrent = useReaderStore((s) => s.setCurrent);
+
+  const [query, setQuery] = useState("");
+
   const onBackHome = () => {
     setParams(new URLSearchParams(), { replace: true });
     setCurrent(book?.id.toString(), "");
-    window.location.reload()
+    window.location.reload();
   };
+
+  // Filter chapters based on search
+  const filteredChapters = book?.chapters?.filter((ch) =>
+    ch.title.toLowerCase().includes(query.toLowerCase())
+  );
+
   return (
-    <aside className={`w-full relative md:w-80 md:flex-none border-r border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4 sm:p-6 h-full overflow-hidden flex flex-col`}>
+    <aside
+      className={`w-full relative md:w-80 md:flex-none border-r border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4 sm:p-6 h-full overflow-hidden flex flex-col`}
+    >
+      {/* Mobile header */}
       <div className="mb-4 flex items-center justify-between md:hidden pb-4 border-b border-[rgb(var(--border))] ">
-        <span className="flex flex-col hover:bg-black/15 px-2 py-2 rounded-md cursor-default" onClick={onBackHome}>
-          <h2 className="text-2xl font-bold text-[rgb(var(--text))]">{book?.title}</h2>
+        <span
+          className="flex flex-col hover:bg-black/15 px-2 py-2 rounded-md cursor-default"
+          onClick={onBackHome}
+        >
+          <h2 className="text-2xl font-bold text-[rgb(var(--text))]">
+            {book?.title}
+          </h2>
           {book?.author && (
-            <p className="m-0 text-sm text-[rgb(var(--muted))]">{book?.author}</p>
-          )}</span>
+            <p className="m-0 text-sm text-[rgb(var(--muted))]">
+              {book?.author}
+            </p>
+          )}
+        </span>
         <button
           onClick={onClose}
           className="rounded-lg border border-[rgb(var(--border))] px-2.5 py-1.5 text-sm transition-colors hover:bg-[rgb(var(--border))] text-[rgb(var(--text))]"
@@ -42,30 +65,44 @@ export default function TOC({
         </button>
       </div>
 
-      <div className="hidden md:block mb-6 " onClick={onBackHome}>
+      {/* Desktop heading -----------------------------------------*/}
+      <div className="hidden md:block mb-6" onClick={onBackHome}>
         <h2 className="m-0 text-xl font-bold text-[rgb(var(--text))] mb-1">
           {book?.title}
         </h2>
         {book?.author && (
-          <p className="m-0 text-sm text-[rgb(var(--muted))]">{book?.author}</p>
+          <p className="m-0 text-sm text-[rgb(var(--muted))]">
+            {book?.author}
+          </p>
         )}
       </div>
 
-      <h3 className="my-4 text-base font-semibold text-[rgb(var(--text))]">
-        ទាំងអស់មាន{toKhmerNumber(book?.chapters?.length)}ជំពូក
+      {/* Search Bar */}
+      <div className="relative w-full mb-3">
+          <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="ស្វែងរកជំពូក..." className="
+           w-full pl-10 pr-3 py-2 rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--input))] text-[rgb(var(--text))]
+           placeholder-[rgb(var(--muted))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--accent))] "/>
+          <Search size={20}  className="absolute left-3 top-1/2 -translate-y-1/2 text-[rgb(var(--muted))]"/>
+      </div>
+      
+
+      <h3 className="my-2 text-base font-semibold text-[rgb(var(--text))]">
+        ទាំងអស់មាន {toKhmerNumber(filteredChapters?.length)} ជំពូក
       </h3>
 
+      {/* /* Chapters List * -------------------------------------------- */}
       <ol className="flex-1 list-none gap-2 p-0 m-0 overflow-y-auto flex flex-col pr-2 no-scrollbar">
-        {book?.chapters?.map((ch, idx) => {
+        {filteredChapters?.map((ch, idx) => {
           const active = currentChapterId === ch.id.toString();
           return (
             <li key={ch.id}>
               <button
                 onClick={() => onOpenChapter(ch.id.toString())}
-                className={`w-full text-left px-3 py-2.5 rounded-lg border transition-all duration-200 flex items-center gap-2 ${active
-                  ? "bg-[rgb(var(--accent))] border-[rgb(var(--accent))] text-[rgb(var(--bg))]"
-                  : "border-[rgb(var(--border))] text-[rgb(var(--text))] hover:border-[rgb(var(--accent))] hover:bg-[rgb(var(--card))]"
-                  }`}
+                className={`w-full text-left px-3 py-2.5 rounded-lg border transition-all duration-200 flex items-center gap-2 ${
+                  active
+                    ? "bg-[rgb(var(--accent))] border-[rgb(var(--accent))] text-[rgb(var(--bg))]"
+                    : "border-[rgb(var(--border))] text-[rgb(var(--text))] hover:border-[rgb(var(--accent))] hover:bg-[rgb(var(--card))]"
+                }`}
                 title={`បើក ${ch.title}`}
               >
                 <span className="font-semibold whitespace-nowrap flex-shrink-0">
