@@ -2,6 +2,7 @@ import type { MouseEventHandler } from "react";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
+
 type Location = {
   bookId: string;
   chapterId: string;
