@@ -14,30 +14,30 @@
     onClose?: () => void;
   };
 
-  type Language = "km" | "en" | "zh";
+  type Language = "kh" | "eng" | "ch";
 
   const languageOptions = {
-    km: { name: "ខ្មែរ", flag: "🇰🇭" },
-    en: { name: "English", flag: "🇺🇸" },
-    zh: { name: "中文", flag: "🇨🇳" }
+    kh: { name: "ខ្មែរ", flag: "🇰🇭" },
+    eng: { name: "English", flag: "🇺🇸" },
+    ch: { name: "中文", flag: "🇨🇳" }
   };
 
   const translations = {
-    km: {
+    kh: {
       closeMenu: "បិទម៉ឺនុយ",
       searchPlaceholder: "ស្វែងរកជំពូក...",
       totalChapters: (count: number) => `ទាំងអស់មាន ${toKhmerNumber(count)} ជំពូក`,
       noAdditionalInfo: "គ្មានព័ត៌មានបន្ថែម",
       chapter: (num: number) => `ជំពូក ${toKhmerNumber(num)}`
     },
-    en: {
+    eng: {
       closeMenu: "Close menu",
       searchPlaceholder: "Search chapters...",
       totalChapters: (count: number) => `Total ${count} chapters`,
       noAdditionalInfo: "No additional information",
       chapter: (num: number) => `Chapter ${num}`
     },
-    zh: {
+    ch: {
       closeMenu: "关闭菜单",
       searchPlaceholder: "搜索章节...",
       totalChapters: (count: number) => `共有 ${count} 章`,
@@ -52,7 +52,7 @@
 
     const [query, setQuery] = useState("");
     const [openChapterId, setOpenChapterId] = useState<string | null>(null);
-    const [currentLanguage, setCurrentLanguage] = useState<Language>("km");
+    const [currentLanguage, setCurrentLanguage] = useState<Language>("kh");
     const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
 
     const t = translations[currentLanguage];
