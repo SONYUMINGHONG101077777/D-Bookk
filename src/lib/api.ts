@@ -16,6 +16,7 @@ export type TParagraphs = {
 }
 
 export type TChapter ={
+    subtitle: string;
     id: number;
     book_id: string;
     title: string;
