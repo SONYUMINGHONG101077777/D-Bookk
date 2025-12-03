@@ -66,3 +66,35 @@ body,
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+/* Custom arrow icon */
+.custom-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-image: url("data:image/svg+xml;utf8,<svg fill='white' width='16' height='16' viewBox='0 0 20 20'><path d='M5 7l5 5 5-5'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 14px;
+}
+
+/* Style dropdown list area (the red area you circled) */
+select {
+  background-color: #1f1f1f; /* Dropdown box's background */
+  color: white;              /* Text color */
+}
+
+/* Scrollbar inside dropdown */
+select::-webkit-scrollbar {
+  width: 6px;
+}
+select::-webkit-scrollbar-track {
+  background: #3a3a3a;
+}
+select::-webkit-scrollbar-thumb {
+  background: #ff4d4d;   /* red scrollbar */
+  border-radius: 4px;
+}
+select::-webkit-scrollbar-thumb:hover {
+  background: #ff1a1a;
+}
