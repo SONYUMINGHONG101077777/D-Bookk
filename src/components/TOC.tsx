@@ -15,13 +15,13 @@ type Props = {
   onClose?: () => void;
 };
 
-type Language = "kh" | "eng" | "ch" ;
+type Language = "kh" | "eng" | "ch";
 
-const languageOptions = {
-  kh: { name: "ខ្មែរ", flag: "🇰🇭" },
-  eng: { name: "English", flag: "🇺🇸" },
-  ch: { name: "中文", flag: "🇨🇳" }
-};
+const languageOptions: { value: Language; label: string; flag: string }[] = [
+  { value: "kh", label: "ខ្មែរ", flag: "/flags/kh.png" },
+  { value: "eng", label: "English", flag: "/flags/gb.png" },
+  { value: "ch", label: "中文", flag: "/flags/cn.png" },
+];
 
 const translations = {
   kh: {
@@ -29,22 +29,22 @@ const translations = {
     searchPlaceholder: "ស្វែងរកជំពូក...",
     totalChapters: (count: number) => `ទាំងអស់មាន ${toKhmerNumber(count)} ជំពូក`,
     selectChapter: "ជ្រើសជំពូក",
-    noSubtitle: "គ្មានព័ត៌មានបន្ថែម"
+    noSubtitle: "គ្មានព័ត៌មានបន្ថែម",
   },
   eng: {
     closeMenu: "Close menu",
     searchPlaceholder: "Search chapters...",
     totalChapters: (count: number) => `Total ${count} chapters`,
     selectChapter: "Select chapter",
-    noSubtitle: "No additional information"
+    noSubtitle: "No additional information",
   },
   ch: {
     closeMenu: "关闭菜单",
     searchPlaceholder: "搜索章节...",
     totalChapters: (count: number) => `共有 ${count} 章`,
     selectChapter: "选择章节",
-    noSubtitle: "无附加信息"
-  }
+    noSubtitle: "无附加信息",
+  },
 };
 
 export default function TOC({ book, currentChapterId, onOpenChapter, onClose }: Props) {
@@ -54,6 +54,7 @@ export default function TOC({ book, currentChapterId, onOpenChapter, onClose }: 
   const [query, setQuery] = useState("");
   const [currentLanguage, setCurrentLanguage] = useState<Language>("kh");
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
+  const [isChapterDropdownOpen, setIsChapterDropdownOpen] = useState(false);
 
   const t = translations[currentLanguage];
 
@@ -63,21 +64,26 @@ export default function TOC({ book, currentChapterId, onOpenChapter, onClose }: 
     window.location.reload();
   };
 
-  const filteredChapters = useMemo(() => {
-    return book?.chapters?.filter(ch =>
-      ch.title.toLowerCase().includes(query.toLowerCase())
-    );
-  }, [book, query]);
+  const filteredChapters = useMemo(
+    () =>
+      book?.chapters?.filter((ch) =>
+        ch.title.toLowerCase().includes(query.toLowerCase())
+      ),
+    [book, query]
+  );
 
-  const selectedChapter = filteredChapters?.find(ch => String(ch.id) === currentChapterId);
+  const selectedChapter = filteredChapters?.find(
+    (ch) => String(ch.id) === currentChapterId
+  );
 
   const chapterOptions = filteredChapters?.map((ch, idx) => ({
     value: ch.id,
-    label: currentLanguage === "kh"
-      ? `ជំពូក ${toKhmerNumber(idx + 1)}៖ ${ch.title}`
-      : currentLanguage === "eng"
-      ? `Chapter ${idx + 1}: ${ch.title}`
-      : `第${idx + 1}章 ${ch.title}`
+    label:
+      currentLanguage === "kh"
+        ? `ជំពូក ${toKhmerNumber(idx + 1)}: ${ch.title}`
+        : currentLanguage === "eng"
+        ? `Chapter ${idx + 1}: ${ch.title}`
+        : `第${idx + 1}章 ${ch.title}`,
   }));
 
   return (
@@ -85,11 +91,13 @@ export default function TOC({ book, currentChapterId, onOpenChapter, onClose }: 
       {/* Header */}
       <div className="mb-4 flex items-center justify-between md:hidden pb-4 border-b">
         <span
-          className="flex flex-col hover:bg-black/15 px-2 py-2 rounded-md cursor-default"
+          className="flex flex-col hover:bg-black/15 px-2 py-2 rounded-md cursor-pointer overflow-hidden"
           onClick={onBackHome}
         >
-          <h2 className="text-2xl font-bold">{book?.title}</h2>
-          {book?.author && <p className="text-sm text-[rgb(var(--muted))]">{book?.author}</p>}
+          <h2 className="text-2xl font-bold truncate">{book?.title}</h2>
+          {book?.author && (
+            <p className="text-sm text-[rgb(var(--muted))] truncate">{book?.author}</p>
+          )}
         </span>
         <button
           onClick={onClose}
@@ -105,33 +113,42 @@ export default function TOC({ book, currentChapterId, onOpenChapter, onClose }: 
           <input
             type="text"
             value={query}
-            onChange={e => setQuery(e.target.value)}
+            onChange={(e) => setQuery(e.target.value)}
             placeholder={t.searchPlaceholder}
-            className="w-full pl-10 pr-3 py-2 rounded-lg border bg-[rgb(var(--input))]"
+            className="w-full pl-10 pr-3 py-2 rounded-lg border bg-[rgb(var(--input))] truncate"
           />
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[rgb(var(--muted))]" size={20} />
+          <Search
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-[rgb(var(--muted))]"
+            size={20}
+          />
         </div>
 
+        {/* Language dropdown */}
         <div className="relative">
           <button
             onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
-            className="flex items-center justify-center w-10 h-10 rounded-lg border"
+            className="flex items-center justify-center w-12 h-10 rounded-lg border gap-1 px-1"
           >
-            <Globe size={20} />
+            <img
+              src={languageOptions.find((l) => l.value === currentLanguage)?.flag}
+              alt={currentLanguage}
+              className="w-5 h-4 object-contain"
+            />
           </button>
 
           {isLanguageDropdownOpen && (
             <div className="absolute top-full right-0 mt-2 bg-[rgb(var(--card))] border rounded-lg shadow z-30">
-              {Object.entries(languageOptions).map(([code, { name, flag }]) => (
+              {languageOptions.map(({ value, label, flag }) => (
                 <button
-                  key={code}
+                  key={value}
                   onClick={() => {
-                    setCurrentLanguage(code as Language);
+                    setCurrentLanguage(value);
                     setIsLanguageDropdownOpen(false);
                   }}
-                  className="w-full px-3 py-2 text-left flex gap-2 hover:bg-[rgb(var(--border))]"
+                  className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-[rgb(var(--border))] overflow-hidden"
                 >
-                  <span>{flag}</span> <span>{name}</span>
+                  <img src={flag} alt={value} className="w-5 h-4 flex-shrink-0" />
+                  <span className="truncate">{label}</span>
                 </button>
               ))}
             </div>
@@ -140,15 +157,24 @@ export default function TOC({ book, currentChapterId, onOpenChapter, onClose }: 
       </div>
 
       {/* Total chapters */}
-      <h3 className="my-2 text-base font-semibold">{t.totalChapters(filteredChapters?.length)}</h3>
+      <h3 className="my-2 text-base font-semibold truncate">
+        {t.totalChapters(filteredChapters?.length || 0)}
+      </h3>
 
-      {/* React-Select dropdown without search */}
+      {/* Chapter select */}
       <Select
         options={chapterOptions}
-        value={chapterOptions?.find(opt => opt.value === currentChapterId) || null}
-        onChange={(opt: any) => onOpenChapter(opt.value)}
+        value={chapterOptions?.find((opt) => opt.value === Number(currentChapterId)) || null}
+        onChange={(opt: any) => onOpenChapter(String(opt.value))}
         placeholder={t.selectChapter}
-        isSearchable={false}  // <-- disabled search
+        isSearchable={false}
+        menuIsOpen={
+          query.length > 0 && chapterOptions && chapterOptions.length > 0
+            ? true
+            : isChapterDropdownOpen
+        }
+        onMenuOpen={() => setIsChapterDropdownOpen(true)}
+        onMenuClose={() => setIsChapterDropdownOpen(false)}
         className="mt-2"
         classNamePrefix="react-select"
         styles={{
@@ -165,15 +191,24 @@ export default function TOC({ book, currentChapterId, onOpenChapter, onClose }: 
             backgroundColor: state.isFocused ? "rgb(var(--border))" : "rgb(var(--input))",
             color: "rgb(var(--text))",
             cursor: "pointer",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
           }),
-          singleValue: (base) => ({ ...base, color: "rgb(var(--text))" }),
+          singleValue: (base) => ({
+            ...base,
+            color: "rgb(var(--text))",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }),
           placeholder: (base) => ({ ...base, color: "rgb(var(--muted))" }),
         }}
       />
 
-      {/* Subtitle Display */}
+      {/* Subtitle */}
       {currentChapterId && (
-        <div className="mt-4 p-3 rounded-lg bg-[rgb(var(--input))] text-sm text-[rgb(var(--muted))]">
+        <div className="mt-4 p-3 rounded-lg bg-[rgb(var(--input))] text-sm text-[rgb(var(--muted))] truncate">
           {selectedChapter?.subtitle || t.noSubtitle}
         </div>
       )}
@@ -184,5 +219,6 @@ export default function TOC({ book, currentChapterId, onOpenChapter, onClose }: 
         <FontSizeController />
       </div>
     </aside>
+    
   );
 }
