@@ -35,11 +35,11 @@ export type TBook = {
 }
 
 export const fetchAllBooks = async () => {
-  const res = await fetch(BASE + "/beydok");
+  const res = await fetch(BASE + "/get-help_center/PALM-01");
   if (!res.ok) throw new Error("Failed to fetch all words");
   return res.json() as Promise<BaseResponse<TBook[]>>;
 };
 export const fetchOneChapterById = async (id: string) => {
-    const res = await fetch(BASE + "/beydok/chapter/" + id)
+    const res = await fetch(BASE + "/get-help_center/PALM-01" + id)
     return res.json() as Promise<TChapter>
 }

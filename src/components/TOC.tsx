@@ -5,7 +5,7 @@ import FontSizeController from "./FontSizeController";
 import ThemeSwitcher from "./ThemeSwitcher";
 import { useReaderStore } from "../store/readerStore";
 import { useState, useMemo } from "react";
-import { Search, Globe } from "lucide-react";
+import { Search } from "lucide-react";
 import Select from "react-select";
 
 type Props = {
@@ -165,6 +165,7 @@ export default function TOC({ book, currentChapterId, onOpenChapter, onClose }: 
       <Select
         options={chapterOptions}
         value={chapterOptions?.find((opt) => opt.value === Number(currentChapterId)) || null}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(opt: any) => onOpenChapter(String(opt.value))}
         placeholder={t.selectChapter}
         isSearchable={false}

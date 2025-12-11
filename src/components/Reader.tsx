@@ -416,5 +416,4 @@ const recomputePages = useCallback(() => {
         </footer></>}
     </section>
   );
-}
-
+};
