@@ -1,12 +1,11 @@
 import { useSearchParams } from "react-router-dom";
-import type { TBook } from "../lib/api";
+import type { TBook, TTopics } from "../lib/api";
 import { toKhmerNumber } from "../utils/toKhmerNumber";
 import FontSizeController from "./FontSizeController";
 import ThemeSwitcher from "./ThemeSwitcher";
 import { useReaderStore } from "../store/readerStore";
-import { useState, useMemo } from "react";
-import { Search } from "lucide-react";
-import Select from "react-select";
+import { useState, useMemo, useEffect } from "react";
+import { Search, ChevronRight, ChevronDown } from "lucide-react";
 
 type Props = {
   book: TBook;
@@ -25,38 +24,87 @@ const languageOptions: { value: Language; label: string; flag: string }[] = [
 
 const translations = {
   kh: {
+    location: "PALM Tech Help Center",
+    searchDocument: "ស្វែងរកឯកសារ",
     closeMenu: "បិទម៉ឺនុយ",
-    searchPlaceholder: "ស្វែងរកជំពូក...",
-    totalChapters: (count: number) => `ទាំងអស់មាន ${toKhmerNumber(count)} ជំពូក`,
-    selectChapter: "ជ្រើសជំពូក",
-    noSubtitle: "គ្មានព័ត៌មានបន្ថែម",
+    searchPlaceholder: "ស្វែងរក...",
+    totalChapters: (count: number) =>
+      `ទាំងអស់មាន ${toKhmerNumber(count)} ជំពូក`,
   },
   eng: {
+    location: "PALM Tech Help Center",
+    searchDocument: "Search Document",
     closeMenu: "Close menu",
-    searchPlaceholder: "Search chapters...",
+    searchPlaceholder: "Search...",
     totalChapters: (count: number) => `Total ${count} chapters`,
-    selectChapter: "Select chapter",
-    noSubtitle: "No additional information",
   },
   ch: {
+    location: "PALM Tech Help Center",
+    searchDocument: "搜索文档",
     closeMenu: "关闭菜单",
-    searchPlaceholder: "搜索章节...",
+    searchPlaceholder: "搜索...",
     totalChapters: (count: number) => `共有 ${count} 章`,
-    selectChapter: "选择章节",
-    noSubtitle: "无附加信息",
   },
 };
 
-export default function TOC({ book, currentChapterId, onOpenChapter, onClose }: Props) {
+// Helper to build topic hierarchy
+const buildTopicTree = (topics: TTopics[]) => {
+  const map = new Map<number, TTopics & { children: TTopics[] }>();
+  const roots: (TTopics & { children: TTopics[] })[] = [];
+
+  // Initialize all topics with children array
+  topics.forEach((topic) => {
+    map.set(topic.id, { ...topic, children: [] });
+  });
+
+  // Build the tree
+  topics.forEach((topic) => {
+    const node = map.get(topic.id)!;
+    if (topic.parent_id === null) {
+      roots.push(node);
+    } else {
+      const parent = map.get(topic.parent_id);
+      if (parent) {
+        parent.children.push(node);
+      } else {
+        roots.push(node); // Orphan node, treat as root
+      }
+    }
+  });
+
+  return roots;
+};
+
+export default function TOC({
+  book,
+  currentChapterId,
+  onOpenChapter,
+  onClose,
+}: Props) {
   const setParams = useSearchParams()[1];
   const setCurrent = useReaderStore((s) => s.setCurrent);
 
   const [query, setQuery] = useState("");
   const [currentLanguage, setCurrentLanguage] = useState<Language>("kh");
+  const [expandedSections, setExpandedSections] = useState<Set<number>>(
+    new Set()
+  );
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
-  const [isChapterDropdownOpen, setIsChapterDropdownOpen] = useState(false);
 
   const t = translations[currentLanguage];
+
+  // Initialize with expanded sections based on the screenshot structure
+  useEffect(() => {
+    // Expand "Getting Started" section by default (matching the screenshot)
+    const gettingStartedTopic = book?.topics?.find(
+      (topic) =>
+        topic.title_en?.includes("Getting Started") ||
+        topic.title_kh?.includes("Getting Started")
+    );
+    if (gettingStartedTopic) {
+      setExpandedSections(new Set([gettingStartedTopic.id]));
+    }
+  }, [book]);
 
   const onBackHome = () => {
     setParams(new URLSearchParams(), { replace: true });
@@ -64,58 +112,180 @@ export default function TOC({ book, currentChapterId, onOpenChapter, onClose }: 
     window.location.reload();
   };
 
-  const filteredChapters = useMemo(
-    () =>
-      book?.chapters?.filter((ch) =>
-        ch.title.toLowerCase().includes(query.toLowerCase())
-      ),
-    [book, query]
-  );
+  // Filter topics based on search query
+  const filteredTopics = useMemo(() => {
+    if (!book?.topics) return [];
 
-  const selectedChapter = filteredChapters?.find(
-    (ch) => String(ch.id) === currentChapterId
-  );
+    if (!query.trim()) return buildTopicTree(book.topics);
 
-  const chapterOptions = filteredChapters?.map((ch, idx) => ({
-    value: ch.id,
-    label:
-      currentLanguage === "kh"
-        ? `ជំពូក ${toKhmerNumber(idx + 1)}: ${ch.title}`
-        : currentLanguage === "eng"
-        ? `Chapter ${idx + 1}: ${ch.title}`
-        : `第${idx + 1}章 ${ch.title}`,
-  }));
+    const searchLower = query.toLowerCase();
+    return buildTopicTree(
+      book.topics.filter(
+        (topic) =>
+          topic.title_en?.toLowerCase().includes(searchLower) ||
+          topic.title_kh?.toLowerCase().includes(searchLower) ||
+          topic.title_ch?.toLowerCase().includes(searchLower) ||
+          topic.subtitle?.toLowerCase().includes(searchLower)
+      )
+    );
+  }, [book, query]);
+
+  const toggleSection = (topicId: number) => {
+    const newExpanded = new Set(expandedSections);
+    if (newExpanded.has(topicId)) {
+      newExpanded.delete(topicId);
+    } else {
+      newExpanded.add(topicId);
+    }
+    setExpandedSections(newExpanded);
+  };
+
+  // Recursive rendering of topic tree
+  const renderTopicTree = (
+    topics: (TTopics & { children: TTopics[] })[],
+    level = 0
+  ) => {
+    return topics.map((topic) => {
+      const hasChildren =
+        topic.children.length > 0 || topic.contents?.length > 0;
+      const isExpanded = expandedSections.has(topic.id);
+      const isCurrent = String(topic.id) === currentChapterId;
+
+      const getTitle = () => {
+        switch (currentLanguage) {
+          case "kh":
+            return topic.title_kh || topic.title_en || topic.title_ch;
+          case "ch":
+            return topic.title_ch || topic.title_en || topic.title_kh;
+          default:
+            return topic.title_en || topic.title_kh || topic.title_ch;
+        }
+      };
+
+      return (
+        <div key={topic.id} className="w-full">
+          {/* Topic Item */}
+          <div
+            className={`flex items-center gap-2 px-3 py-2 rounded-md cursor-pointer transition-colors ${
+              isCurrent
+                ? "bg-[rgb(var(--primary)/0.1)] text-[rgb(var(--primary))]"
+                : "hover:bg-[rgb(var(--border))]"
+            }`}
+            style={{ paddingLeft: `${level * 20 + 12}px` }}
+            onClick={() => {
+              if (hasChildren) {
+                toggleSection(topic.id);
+              } else {
+                onOpenChapter(String(topic.id));
+              }
+            }}
+          >
+            {hasChildren && (
+              <span className="flex-shrink-0 w-4 h-4 flex items-center justify-center">
+                {isExpanded ? (
+                  <ChevronDown size={14} className="text-[rgb(var(--muted))]" />
+                ) : (
+                  <ChevronRight
+                    size={14}
+                    className="text-[rgb(var(--muted))]"
+                  />
+                )}
+              </span>
+            )}
+            {!hasChildren && <span className="w-4"></span>}
+
+            <span className="flex-1 truncate text-sm font-medium">
+              {getTitle()}
+            </span>
+          </div>
+
+          {/* Render contents if expanded */}
+          {isExpanded && topic.contents && topic.contents.length > 0 && (
+            <div className="ml-4">
+              {topic.contents.map((content) => (
+                <div
+                  key={content.id}
+                  className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-[rgb(var(--border)/0.5)] rounded-md"
+                  style={{ paddingLeft: `${(level + 1) * 20 + 20}px` }}
+                  onClick={() => {
+                    // Handle content click if needed
+                    console.log("Content clicked:", content.id);
+                  }}
+                >
+                  <span className="flex-1 truncate text-sm text-[rgb(var(--muted))]">
+                    {currentLanguage === "kh"
+                      ? content.content_kh
+                      : currentLanguage === "ch"
+                      ? content.content_ch
+                      : content.content_en}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Render children if expanded */}
+          {isExpanded && hasChildren && topic.children.length > 0 && (
+            <div className="ml-4">
+              {renderTopicTree(topic.children, level + 1)}
+            </div>
+          )}
+        </div>
+      );
+    });
+  };
 
   return (
-    <aside className="w-full relative md:w-80 border-r bg-[rgb(var(--card))] p-4 sm:p-6 h-full flex flex-col">
-      {/* Header */}
-      <div className="mb-4 flex items-center justify-between md:hidden pb-4 border-b">
+    <aside className="w-full md:w-80 border-r border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4 sm:p-6 h-full flex flex-col overflow-hidden">
+      {/* Mobile header */}
+      <div className="mb-4 flex items-center justify-between md:hidden pb-4 border-b border-[rgb(var(--border))]">
         <span
-          className="flex flex-col hover:bg-black/15 px-2 py-2 rounded-md cursor-pointer overflow-hidden"
+          className="flex flex-col hover:bg-[rgb(var(--border))] px-2 py-2 rounded-md cursor-pointer overflow-hidden"
           onClick={onBackHome}
         >
-          <h2 className="text-2xl font-bold truncate">{book?.title}</h2>
-          {book?.author && (
-            <p className="text-sm text-[rgb(var(--muted))] truncate">{book?.author}</p>
+          <h2 className="text-2xl font-bold truncate text-[rgb(var(--foreground))]">
+            {
+              book?.[
+                `title_${currentLanguage}` as
+                  | "title_en"
+                  | "title_kh"
+                  | "title_ch"
+              ]
+            }
+          </h2>
+          {book?.company_id && (
+            <p className="text-sm text-[rgb(var(--muted))] truncate">
+              {book?.company_id}
+            </p>
           )}
         </span>
         <button
           onClick={onClose}
-          className="rounded-lg border px-2.5 py-1.5 text-sm"
+          className="rounded-lg border border-[rgb(var(--border))] px-2.5 py-1.5 text-sm hover:bg-[rgb(var(--border))] text-[rgb(var(--foreground))]"
         >
           ✕
         </button>
       </div>
 
+      {/* Header matching the screenshot */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-[rgb(var(--foreground))] mb-1">
+          {t.location}
+        </h1>
+        <h2 className="text-lg font-semibold text-[rgb(var(--muted))]">
+          {t.searchDocument}
+        </h2>
+      </div>
+
       {/* Search + Language */}
-      <div className="flex items-center gap-2 mb-3">
+      <div className="flex items-center gap-2 mb-4">
         <div className="relative flex-1">
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t.searchPlaceholder}
-            className="w-full pl-10 pr-3 py-2 rounded-lg border bg-[rgb(var(--input))] truncate"
+            className="w-full pl-10 pr-3 py-2 rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--input))] text-[rgb(var(--foreground))] placeholder-[rgb(var(--muted))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--primary))] focus:border-transparent truncate"
           />
           <Search
             className="absolute left-3 top-1/2 -translate-y-1/2 text-[rgb(var(--muted))]"
@@ -127,99 +297,65 @@ export default function TOC({ book, currentChapterId, onOpenChapter, onClose }: 
         <div className="relative">
           <button
             onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
-            className="flex items-center justify-center w-12 h-10 rounded-lg border gap-1 px-1"
+            className="flex items-center justify-center w-12 h-10 rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--input))] hover:bg-[rgb(var(--border))] gap-1 px-1 transition-colors"
           >
             <img
-              src={languageOptions.find((l) => l.value === currentLanguage)?.flag}
+              src={
+                languageOptions.find((l) => l.value === currentLanguage)?.flag
+              }
               alt={currentLanguage}
               className="w-5 h-4 object-contain"
             />
           </button>
 
           {isLanguageDropdownOpen && (
-            <div className="absolute top-full right-0 mt-2 bg-[rgb(var(--card))] border rounded-lg shadow z-30">
-              {languageOptions.map(({ value, label, flag }) => (
-                <button
-                  key={value}
-                  onClick={() => {
-                    setCurrentLanguage(value);
-                    setIsLanguageDropdownOpen(false);
-                  }}
-                  className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-[rgb(var(--border))] overflow-hidden"
-                >
-                  <img src={flag} alt={value} className="w-5 h-4 flex-shrink-0" />
-                  <span className="truncate">{label}</span>
-                </button>
-              ))}
-            </div>
+            <>
+              <div
+                className="fixed inset-0 z-20"
+                onClick={() => setIsLanguageDropdownOpen(false)}
+              />
+              <div className="absolute top-full right-0 mt-2 bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-lg shadow-lg z-30 min-w-[120px]">
+                {languageOptions.map(({ value, label, flag }) => (
+                  <button
+                    key={value}
+                    onClick={() => {
+                      setCurrentLanguage(value);
+                      setIsLanguageDropdownOpen(false);
+                    }}
+                    className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-[rgb(var(--border))] overflow-hidden transition-colors"
+                  >
+                    <img
+                      src={flag}
+                      alt={value}
+                      className="w-5 h-4 flex-shrink-0"
+                    />
+                    <span className="truncate text-[rgb(var(--foreground))]">
+                      {label}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </>
           )}
         </div>
       </div>
 
       {/* Total chapters */}
-      <h3 className="my-2 text-base font-semibold truncate">
-        {t.totalChapters(filteredChapters?.length || 0)}
+      <h3 className="my-2 text-base font-semibold text-[rgb(var(--foreground))] truncate">
+        {t.totalChapters(book?.topics?.length || 0)}
       </h3>
 
-      {/* Chapter select */}
-      <Select
-        options={chapterOptions}
-        value={chapterOptions?.find((opt) => opt.value === Number(currentChapterId)) || null}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(opt: any) => onOpenChapter(String(opt.value))}
-        placeholder={t.selectChapter}
-        isSearchable={false}
-        menuIsOpen={
-          query.length > 0 && chapterOptions && chapterOptions.length > 0
-            ? true
-            : isChapterDropdownOpen
-        }
-        onMenuOpen={() => setIsChapterDropdownOpen(true)}
-        onMenuClose={() => setIsChapterDropdownOpen(false)}
-        className="mt-2"
-        classNamePrefix="react-select"
-        styles={{
-          control: (base) => ({
-            ...base,
-            backgroundColor: "rgb(var(--input))",
-            borderColor: "rgb(var(--border))",
-            borderRadius: "0.5rem",
-            padding: "0.25rem",
-            minHeight: "2.5rem",
-          }),
-          option: (base, state) => ({
-            ...base,
-            backgroundColor: state.isFocused ? "rgb(var(--border))" : "rgb(var(--input))",
-            color: "rgb(var(--text))",
-            cursor: "pointer",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }),
-          singleValue: (base) => ({
-            ...base,
-            color: "rgb(var(--text))",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }),
-          placeholder: (base) => ({ ...base, color: "rgb(var(--muted))" }),
-        }}
-      />
+      {/* Topics Tree */}
+      <div className="flex-1 overflow-y-auto mt-2">
+        {/* Main sections like "Getting Started" from screenshot */}
+        <div className="space-y-0.5">{renderTopicTree(filteredTopics)}</div>
+      </div>
 
-      {/* Subtitle */}
-      {currentChapterId && (
-        <div className="mt-4 p-3 rounded-lg bg-[rgb(var(--input))] text-sm text-[rgb(var(--muted))] truncate">
-          {selectedChapter?.subtitle || t.noSubtitle}
-        </div>
-      )}
-
-      {/* Footer */}
-      <div className="flex flex-col gap-3 mt-6 pt-4 border-t">
+      {/* Footer with controls */}
+      <div className="flex flex-col gap-3 mt-6 pt-4 border-t border-[rgb(var(--border))]">
         <ThemeSwitcher />
         <FontSizeController />
       </div>
     </aside>
-    
   );
 }

@@ -7,39 +7,48 @@ type BaseResponse<T> = {
   data: T;
 };
 
-export type TParagraphs = {
-    id: number
-    chapter_id: string;
-    content: string;
-    created_at: string
-    updated_at: string;
+export type TContents = {
+    id: number;
+    topic_id: number;
+    content_en: string;
+    content_kh: string;
+    content_ch: string;
+    created_at: string;
+    updated_at : string;
 }
 
-export type TChapter ={
-    subtitle: string;
+export type TTopics ={
     id: number;
-    book_id: string;
-    title: string;
+    section_id: number;
+    parent_id: number | null;
+    subtitle: string;
+    title_en: string;
+    title_kh: string;
+    title_ch: string;
     created_at: string
     updated_at : string;
-    paragraphs: TParagraphs[]
+    children: TTopics[];
+    contents: TContents[]
 }
 
 export type TBook = {
-    id: number
-    title: string
-    author: string 
-    created_at: string
-    updated_at : string;
-    chapters: TChapter[]
+    id: number;
+    title_en: string;
+    title_kh: string;
+    title_ch: string;
+    status: number
+    company_id: string;
+    created_at: string;
+    updated_at: string;
+    topics: TTopics[];
 }
 
 export const fetchAllBooks = async () => {
   const res = await fetch(BASE + "/get-help_center/PALM-01");
   if (!res.ok) throw new Error("Failed to fetch all words");
-  return res.json() as Promise<BaseResponse<TBook[]>>;
+  return res.json() as Promise<BaseResponse<TContents[]>>;
 };
 export const fetchOneChapterById = async (id: string) => {
     const res = await fetch(BASE + "/get-help_center/PALM-01" + id)
-    return res.json() as Promise<TChapter>
+    return res.json() as Promise<TTopics>
 }
