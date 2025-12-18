@@ -168,8 +168,8 @@ export default function TOC({
           <div
             className={`flex items-center gap-2 px-3 py-2 rounded-md cursor-pointer transition-colors ${
               isCurrent
-                ? "bg-[rgb(var(--primary)/0.1)] text-[rgb(var(--primary))]"
-                : "hover:bg-[rgb(var(--border))]"
+                ? "bg-primary/10 text-primary"
+                : "hover:bg-accent text-foreground"
             }`}
             style={{ paddingLeft: `${level * 20 + 12}px` }}
             onClick={() => {
@@ -183,11 +183,11 @@ export default function TOC({
             {hasChildren && (
               <span className="flex-shrink-0 w-4 h-4 flex items-center justify-center">
                 {isExpanded ? (
-                  <ChevronDown size={14} className="text-[rgb(var(--muted))]" />
+                  <ChevronDown size={14} className="text-muted-foreground" />
                 ) : (
                   <ChevronRight
                     size={14}
-                    className="text-[rgb(var(--muted))]"
+                    className="text-muted-foreground"
                   />
                 )}
               </span>
@@ -205,14 +205,14 @@ export default function TOC({
               {topic.contents.map((content) => (
                 <div
                   key={content.id}
-                  className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-[rgb(var(--border)/0.5)] rounded-md"
+                  className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-accent/50 rounded-md"
                   style={{ paddingLeft: `${(level + 1) * 20 + 20}px` }}
                   onClick={() => {
                     // Handle content click if needed
                     console.log("Content clicked:", content.id);
                   }}
                 >
-                  <span className="flex-1 truncate text-sm text-[rgb(var(--muted))]">
+                  <span className="flex-1 truncate text-sm text-muted-foreground">
                     {currentLanguage === "kh"
                       ? content.content_kh
                       : currentLanguage === "ch"
@@ -236,14 +236,14 @@ export default function TOC({
   };
 
   return (
-    <aside className="w-full md:w-80 border-r border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4 sm:p-6 h-full flex flex-col overflow-hidden">
+    <aside className="w-full md:w-80 border-r bg-card p-4 sm:p-6 h-full flex flex-col overflow-hidden">
       {/* Mobile header */}
-      <div className="mb-4 flex items-center justify-between md:hidden pb-4 border-b border-[rgb(var(--border))]">
+      <div className="mb-4 flex items-center justify-between md:hidden pb-4 border-b">
         <span
-          className="flex flex-col hover:bg-[rgb(var(--border))] px-2 py-2 rounded-md cursor-pointer overflow-hidden"
+          className="flex flex-col hover:bg-accent px-2 py-2 rounded-md cursor-pointer overflow-hidden"
           onClick={onBackHome}
         >
-          <h2 className="text-2xl font-bold truncate text-[rgb(var(--foreground))]">
+          <h2 className="text-2xl font-bold truncate text-foreground">
             {
               book?.[
                 `title_${currentLanguage}` as
@@ -254,14 +254,14 @@ export default function TOC({
             }
           </h2>
           {book?.company_id && (
-            <p className="text-sm text-[rgb(var(--muted))] truncate">
+            <p className="text-sm text-muted-foreground truncate">
               {book?.company_id}
             </p>
           )}
         </span>
         <button
           onClick={onClose}
-          className="rounded-lg border border-[rgb(var(--border))] px-2.5 py-1.5 text-sm hover:bg-[rgb(var(--border))] text-[rgb(var(--foreground))]"
+          className="rounded-lg border px-2.5 py-1.5 text-sm hover:bg-accent text-foreground"
         >
           ✕
         </button>
@@ -269,10 +269,10 @@ export default function TOC({
 
       {/* Header matching the screenshot */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[rgb(var(--foreground))] mb-1">
+        <h1 className="text-2xl font-bold text-foreground mb-1">
           {t.location}
         </h1>
-        <h2 className="text-lg font-semibold text-[rgb(var(--muted))]">
+        <h2 className="text-lg font-semibold text-muted-foreground">
           {t.searchDocument}
         </h2>
       </div>
@@ -285,10 +285,10 @@ export default function TOC({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t.searchPlaceholder}
-            className="w-full pl-10 pr-3 py-2 rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--input))] text-[rgb(var(--foreground))] placeholder-[rgb(var(--muted))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--primary))] focus:border-transparent truncate"
+            className="w-full pl-10 pr-3 py-2 rounded-lg border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent truncate"
           />
           <Search
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-[rgb(var(--muted))]"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
             size={20}
           />
         </div>
@@ -297,7 +297,7 @@ export default function TOC({
         <div className="relative">
           <button
             onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
-            className="flex items-center justify-center w-12 h-10 rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--input))] hover:bg-[rgb(var(--border))] gap-1 px-1 transition-colors"
+            className="flex items-center justify-center w-12 h-10 rounded-lg border bg-background hover:bg-accent gap-1 px-1 transition-colors"
           >
             <img
               src={
@@ -314,7 +314,7 @@ export default function TOC({
                 className="fixed inset-0 z-20"
                 onClick={() => setIsLanguageDropdownOpen(false)}
               />
-              <div className="absolute top-full right-0 mt-2 bg-[rgb(var(--card))] border border-[rgb(var(--border))] rounded-lg shadow-lg z-30 min-w-[120px]">
+              <div className="absolute top-full right-0 mt-2 bg-card border rounded-lg shadow-lg z-30 min-w-[120px]">
                 {languageOptions.map(({ value, label, flag }) => (
                   <button
                     key={value}
@@ -322,14 +322,14 @@ export default function TOC({
                       setCurrentLanguage(value);
                       setIsLanguageDropdownOpen(false);
                     }}
-                    className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-[rgb(var(--border))] overflow-hidden transition-colors"
+                    className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-accent overflow-hidden transition-colors text-foreground"
                   >
                     <img
                       src={flag}
                       alt={value}
                       className="w-5 h-4 flex-shrink-0"
                     />
-                    <span className="truncate text-[rgb(var(--foreground))]">
+                    <span className="truncate">
                       {label}
                     </span>
                   </button>
@@ -341,7 +341,7 @@ export default function TOC({
       </div>
 
       {/* Total chapters */}
-      <h3 className="my-2 text-base font-semibold text-[rgb(var(--foreground))] truncate">
+      <h3 className="my-2 text-base font-semibold text-foreground truncate">
         {t.totalChapters(book?.topics?.length || 0)}
       </h3>
 
@@ -352,7 +352,7 @@ export default function TOC({
       </div>
 
       {/* Footer with controls */}
-      <div className="flex flex-col gap-3 mt-6 pt-4 border-t border-[rgb(var(--border))]">
+      <div className="flex flex-col gap-3 mt-6 pt-4 border-t">
         <ThemeSwitcher />
         <FontSizeController />
       </div>
