@@ -23,11 +23,22 @@ const App = () => {
     if (!currentBookId || !currentChapterId) {
       const fallbackChapter =
         continueBook(book?.id?.toString() || "", firstChapterId || "")
-          ?.chapterId || firstChapterId;
+          ?.chapterId ??
+        firstChapterId ??
+        "";
 
-      setCurrent(book?.id?.toString() || "", fallbackChapter);
+      if (book?.id && fallbackChapter) {
+        setCurrent(book.id.toString(), fallbackChapter);
+      }
     }
-  }, []);
+  }, [
+    book,
+    currentBookId,
+    currentChapterId,
+    firstChapterId,
+    continueBook,
+    setCurrent,
+  ]);
 
   const shownChapterId = useMemo(() => {
     return currentChapterId ?? firstChapterId;
@@ -47,7 +58,7 @@ const App = () => {
       {/* Desktop TOC */}
       <div className="hidden md:block">
         <TOC
-          book={book as TBook}
+          book={book as unknown as TBook}
           currentChapterId={shownChapterId?.toString() || ""}
           onOpenChapter={openChapter}
         />
@@ -63,7 +74,7 @@ const App = () => {
         aria-modal="true"
       >
         <TOC
-          book={book as TBook}
+          book={book as unknown as TBook}
           currentChapterId={shownChapterId?.toString() || ""}
           onOpenChapter={openChapter}
           onClose={() => setTocOpen(false)}
@@ -83,7 +94,7 @@ const App = () => {
       <div className="flex-1 min-w-0">
         <Reader
           isRefetching={isRefetching}
-          book={book as TBook}
+          book={book as unknown as TBook}
           refetch={refetch}
           chapterId={shownChapterId?.toString() || ""}
           onOpenToc={() => setTocOpen(true)}

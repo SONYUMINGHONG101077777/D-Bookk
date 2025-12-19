@@ -13,8 +13,7 @@ export type TContents = {
     content_en: string;
     content_kh: string;
     content_ch: string;
-    created_at: string;
-    updated_at : string;
+    chapters: TTopics[];
 }
 
 export type TTopics ={
@@ -25,8 +24,6 @@ export type TTopics ={
     title_en: string;
     title_kh: string;
     title_ch: string;
-    created_at: string
-    updated_at : string;
     children: TTopics[];
     contents: TContents[]
 }
@@ -38,8 +35,6 @@ export type TBook = {
     title_ch: string;
     status: number
     company_id: string;
-    created_at: string;
-    updated_at: string;
     topics: TTopics[];
 }
 
@@ -49,6 +44,6 @@ export const fetchAllBooks = async () => {
   return res.json() as Promise<BaseResponse<TContents[]>>;
 };
 export const fetchOneChapterById = async (id: string) => {
-    const res = await fetch(BASE + "/get-help_center/PALM-01" + id)
+    const res = await fetch(BASE + "/get-help_center/contents" + id)
     return res.json() as Promise<TTopics>
-}
+} 

@@ -16,7 +16,7 @@ export default function ReaderContent({
       className="mx-auto max-w-3xl text-[1.05rem] sm:text-lg leading-relaxed whitespace-pre-line"
       style={{
         wordBreak: "break-word",
-        overflowWrap: "anywhere" as any,
+        overflowWrap: "anywhere",
       }}
     >
       {isRefetching && <LoadingModal isLoading={isRefetching} />}
@@ -33,7 +33,7 @@ export default function ReaderContent({
           <div key={i} className="mb-5">
             {lines.map((line, j) => {
               const isTitle =
-                /^\d+\.\s|^Security Note|^Role\-Based Permission/i.test(line);
+                /^\d+\.\s|^Security Note|^Role-Based Permission/i.test(line);
               const isCode =
                 /^\s*(const|let|enum|export|function|router\.|req\.|res\.|jwt\.|mongoose|type\s)/.test(
                   line
