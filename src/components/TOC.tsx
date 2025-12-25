@@ -49,17 +49,32 @@ const translations = {
 
 // Helper to build topic hierarchy
 const buildTopicTree = (topics: TTopics[]) => {
+  console.log("Building topic tree from:", topics);
+  
+  if (!topics || topics.length === 0) {
+    console.warn("No topics provided to buildTopicTree");
+    return [];
+  }
+
   const map = new Map<number, TTopics & { children: TTopics[] }>();
   const roots: (TTopics & { children: TTopics[] })[] = [];
 
   // Initialize all topics with children array
   topics.forEach((topic) => {
-    map.set(topic.id, { ...topic, children: [] });
+    map.set(topic.id, { 
+      ...topic, 
+      children: []
+    });
   });
 
-  // Build the tree
+  // Build the tree based on parent_id relationships
   topics.forEach((topic) => {
-    const node = map.get(topic.id)!;
+    const node = map.get(topic.id);
+    if (!node) {
+      console.warn(`Topic ${topic.id} not found in map`);
+      return;
+    }
+    
     if (topic.parent_id === null) {
       roots.push(node);
     } else {
@@ -67,11 +82,13 @@ const buildTopicTree = (topics: TTopics[]) => {
       if (parent) {
         parent.children.push(node);
       } else {
+        console.warn(`Parent ${topic.parent_id} not found for topic ${topic.id}, treating as root`);
         roots.push(node); // Orphan node, treat as root
       }
     }
   });
 
+  console.log("Built topic tree roots:", roots);
   return roots;
 };
 
@@ -81,28 +98,48 @@ export default function TOC({
   onOpenChapter,
   onClose,
 }: Props) {
+  console.log("TOC Component - Book:", book);
+  console.log("TOC Component - Current Chapter ID:", currentChapterId);
+  
   const setParams = useSearchParams()[1];
   const setCurrent = useReaderStore((s) => s.setCurrent);
+  const language = useReaderStore((s) => s.language);
 
   const [query, setQuery] = useState("");
-  const [currentLanguage, setCurrentLanguage] = useState<Language>("kh");
   const [expandedSections, setExpandedSections] = useState<Set<number>>(
     new Set()
   );
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
 
+  // Use language from store instead of local state
+  const currentLanguage: Language = language as Language || "eng";
   const t = translations[currentLanguage];
 
   // Initialize with expanded sections based on the screenshot structure
   useEffect(() => {
-    // Expand "Getting Started" section by default (matching the screenshot)
-    const gettingStartedTopic = book?.topics?.find(
-      (topic) =>
-        topic.title_en?.includes("Getting Started") ||
-        topic.title_kh?.includes("Getting Started")
-    );
-    if (gettingStartedTopic) {
-      setExpandedSections(new Set([gettingStartedTopic.id]));
+    console.log("Initializing expanded sections for book:", book);
+    
+    if (!book || !book.topics || book.topics.length === 0) {
+      console.warn("No topics to initialize");
+      return;
+    }
+
+    // Expand first root topic by default
+    const tree = buildTopicTree(book.topics);
+    const firstRoot = tree[0];
+    
+    if (firstRoot) {
+      console.log("Expanding first root topic:", firstRoot.id);
+      setExpandedSections(new Set([firstRoot.id]));
+      
+      // Also expand its first child if exists
+      if (firstRoot.children && firstRoot.children.length > 0) {
+        setExpandedSections(prev => {
+          const newSet = new Set(prev);
+          newSet.add(firstRoot.children[0].id);
+          return newSet;
+        });
+      }
     }
   }, [book]);
 
@@ -114,23 +151,38 @@ export default function TOC({
 
   // Filter topics based on search query
   const filteredTopics = useMemo(() => {
-    if (!book?.topics) return [];
+    console.log("Filtering topics with query:", query);
+    console.log("Book topics:", book?.topics);
+    
+    if (!book?.topics || book.topics.length === 0) {
+      console.warn("No topics to filter");
+      return [];
+    }
 
-    if (!query.trim()) return buildTopicTree(book.topics);
+    if (!query.trim()) {
+      const tree = buildTopicTree(book.topics);
+      console.log("No query, returning full tree:", tree);
+      return tree;
+    }
 
     const searchLower = query.toLowerCase();
-    return buildTopicTree(
-      book.topics.filter(
-        (topic) =>
-          topic.title_en?.toLowerCase().includes(searchLower) ||
-          topic.title_kh?.toLowerCase().includes(searchLower) ||
-          topic.title_ch?.toLowerCase().includes(searchLower) ||
-          topic.subtitle?.toLowerCase().includes(searchLower)
-      )
+    console.log("Searching for:", searchLower);
+    
+    const filtered = book.topics.filter(
+      (topic) =>
+        (topic.title_en?.toLowerCase().includes(searchLower)) ||
+        (topic.title_kh?.toLowerCase().includes(searchLower)) ||
+        (topic.title_ch?.toLowerCase().includes(searchLower))
     );
+    
+    console.log("Filtered topics:", filtered);
+    const tree = buildTopicTree(filtered);
+    console.log("Built tree from filtered:", tree);
+    return tree;
   }, [book, query]);
 
   const toggleSection = (topicId: number) => {
+    console.log("Toggling section:", topicId);
     const newExpanded = new Set(expandedSections);
     if (newExpanded.has(topicId)) {
       newExpanded.delete(topicId);
@@ -145,20 +197,36 @@ export default function TOC({
     topics: (TTopics & { children: TTopics[] })[],
     level = 0
   ) => {
+    console.log("Rendering topic tree level", level, "with topics:", topics);
+    
+    if (!topics || topics.length === 0) {
+      console.warn("No topics to render at level", level);
+      return null;
+    }
+
     return topics.map((topic) => {
-      const hasChildren =
-        topic.children.length > 0 || topic.contents?.length > 0;
+      const children = topic.children || [];
+      const hasChildren = children.length > 0;
+      const hasContents = topic.contents && topic.contents.length > 0;
       const isExpanded = expandedSections.has(topic.id);
       const isCurrent = String(topic.id) === currentChapterId;
+
+      console.log(`Topic ${topic.id}:`, {
+        title_en: topic.title_en,
+        hasChildren,
+        hasContents,
+        isExpanded,
+        isCurrent
+      });
 
       const getTitle = () => {
         switch (currentLanguage) {
           case "kh":
-            return topic.title_kh || topic.title_en || topic.title_ch;
+            return topic.title_kh || topic.title_en || `Topic ${topic.id}`;
           case "ch":
-            return topic.title_ch || topic.title_en || topic.title_kh;
+            return topic.title_ch || topic.title_en || `Topic ${topic.id}`;
           default:
-            return topic.title_en || topic.title_kh || topic.title_ch;
+            return topic.title_en || `Topic ${topic.id}`;
         }
       };
 
@@ -173,22 +241,22 @@ export default function TOC({
             }`}
             style={{ paddingLeft: `${level * 20 + 12}px` }}
             onClick={() => {
+              console.log(`Clicked topic ${topic.id}`, { hasChildren, hasContents });
               if (hasChildren) {
                 toggleSection(topic.id);
-              } else {
+              } else if (hasContents || !hasChildren) {
+                // Allow clicking even if no contents - it might be fetched dynamically
+                console.log(`Opening chapter ${topic.id}`);
                 onOpenChapter(String(topic.id));
               }
             }}
           >
-            {hasChildren && (
+            {(hasChildren) && (
               <span className="flex-shrink-0 w-4 h-4 flex items-center justify-center">
                 {isExpanded ? (
                   <ChevronDown size={14} className="text-muted-foreground" />
                 ) : (
-                  <ChevronRight
-                    size={14}
-                    className="text-muted-foreground"
-                  />
+                  <ChevronRight size={14} className="text-muted-foreground" />
                 )}
               </span>
             )}
@@ -199,41 +267,55 @@ export default function TOC({
             </span>
           </div>
 
-          {/* Render contents if expanded */}
-          {isExpanded && topic.contents && topic.contents.length > 0 && (
-            <div className="ml-4">
-              {topic.contents.map((content) => (
-                <div
-                  key={content.id}
-                  className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-accent/50 rounded-md"
-                  style={{ paddingLeft: `${(level + 1) * 20 + 20}px` }}
-                  onClick={() => {
-                    // Handle content click if needed
-                    console.log("Content clicked:", content.id);
-                  }}
-                >
-                  <span className="flex-1 truncate text-sm text-muted-foreground">
-                    {currentLanguage === "kh"
-                      ? content.content_kh
-                      : currentLanguage === "ch"
-                      ? content.content_ch
-                      : content.content_en}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-
           {/* Render children if expanded */}
-          {isExpanded && hasChildren && topic.children.length > 0 && (
+          {isExpanded && hasChildren && children.length > 0 && (
             <div className="ml-4">
-              {renderTopicTree(topic.children, level + 1)}
+              {renderTopicTree(children.map(child => ({
+                ...child,
+                children: child.children || []
+              })), level + 1)}
             </div>
           )}
         </div>
       );
     });
   };
+
+  const getBookTitle = () => {
+    if (!book) {
+      console.warn("No book data for title");
+      return "Loading...";
+    }
+    
+    console.log("Getting book title for language:", currentLanguage);
+    let title = "";
+    
+    switch (currentLanguage) {
+      case "kh":
+        title = book.title_kh || book.title_en || `Book ${book.id}`;
+        break;
+      case "ch":
+        title = book.title_ch || book.title_en || `Book ${book.id}`;
+        break;
+      default:
+        title = book.title_en || `Book ${book.id}`;
+    }
+    
+    console.log("Book title:", title);
+    return title;
+  };
+
+  if (!book) {
+    return (
+      <aside className="w-full md:w-80 border-r bg-card p-4 sm:p-6 h-full flex flex-col overflow-hidden">
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-muted-foreground">Loading table of contents...</div>
+          </div>
+        </div>
+      </aside>
+    );
+  }
 
   return (
     <aside className="w-full md:w-80 border-r bg-card p-4 sm:p-6 h-full flex flex-col overflow-hidden">
@@ -244,14 +326,7 @@ export default function TOC({
           onClick={onBackHome}
         >
           <h2 className="text-2xl font-bold truncate text-foreground">
-            {
-              book?.[
-                `title_${currentLanguage}` as
-                  | "title_en"
-                  | "title_kh"
-                  | "title_ch"
-              ]
-            }
+            {getBookTitle()}
           </h2>
           {book?.company_id && (
             <p className="text-sm text-muted-foreground truncate">
@@ -319,7 +394,9 @@ export default function TOC({
                   <button
                     key={value}
                     onClick={() => {
-                      setCurrentLanguage(value);
+                      console.log("Changing language to:", value);
+                      // Update language in store
+                      useReaderStore.getState().setLanguage(value);
                       setIsLanguageDropdownOpen(false);
                     }}
                     className="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-accent overflow-hidden transition-colors text-foreground"
@@ -329,9 +406,7 @@ export default function TOC({
                       alt={value}
                       className="w-5 h-4 flex-shrink-0"
                     />
-                    <span className="truncate">
-                      {label}
-                    </span>
+                    <span className="truncate">{label}</span>
                   </button>
                 ))}
               </div>
@@ -340,15 +415,22 @@ export default function TOC({
         </div>
       </div>
 
-      {/* Total chapters */}
+      {/* Total topics/chapters */}
       <h3 className="my-2 text-base font-semibold text-foreground truncate">
         {t.totalChapters(book?.topics?.length || 0)}
       </h3>
 
       {/* Topics Tree */}
       <div className="flex-1 overflow-y-auto mt-2">
-        {/* Main sections like "Getting Started" from screenshot */}
-        <div className="space-y-0.5">{renderTopicTree(filteredTopics)}</div>
+        <div className="space-y-0.5">
+          {filteredTopics.length > 0 ? (
+            renderTopicTree(filteredTopics)
+          ) : (
+            <div className="px-3 py-2 text-sm text-muted-foreground">
+              {query.trim() ? "No topics found matching your search" : "No topics available"}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Footer with controls */}

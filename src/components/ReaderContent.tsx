@@ -11,6 +11,45 @@ export default function ReaderContent({
   fontSize = 16,
   isRefetching = false,
 }: ReaderContentProps) {
+  console.log("ReaderContent - Content length:", content.length, "Font size:", fontSize);
+  
+  if (isRefetching) {
+    return <LoadingModal isLoading={isRefetching} />;
+  }
+
+  if (!content || content.length === 0) {
+    return (
+      <article className="mx-auto max-w-3xl text-center py-10">
+        <div className="text-muted-foreground">
+          <p>No content to display.</p>
+          <p className="text-sm mt-2">This chapter might be empty.</p>
+        </div>
+      </article>
+    );
+  }
+
+  // Parse HTML content safely
+  const parseHTMLContent = (html: string) => {
+    try {
+      // Remove script tags for security
+      const sanitized = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+      
+      // Create a temporary div to parse HTML
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = sanitized;
+      
+      // Get text content while preserving some formatting
+      const textContent = tempDiv.textContent || tempDiv.innerText || '';
+      
+      // Replace multiple spaces with single space
+      return textContent.replace(/\s+/g, ' ').trim();
+    } catch (error) {
+      console.error("Error parsing HTML content:", error);
+      // Return raw text if parsing fails
+      return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    }
+  };
+
   return (
     <article
       className="mx-auto max-w-3xl text-[1.05rem] sm:text-lg leading-relaxed whitespace-pre-line"
@@ -19,24 +58,43 @@ export default function ReaderContent({
         overflowWrap: "anywhere",
       }}
     >
-      {isRefetching && <LoadingModal isLoading={isRefetching} />}
-
       {content.map((segment, i) => {
-        const formatted = segment
-          .replace(/\\r\\n/g, "\n")
-          .replace(/\r\n/g, "\n")
-          .replace(/\\n/g, "\n");
+        console.log(`Segment ${i} length:`, segment.length);
+        
+        // Parse HTML content to plain text
+        const plainText = parseHTMLContent(segment);
+        
+        // Split into lines
+        const lines = plainText.split('\n').filter(Boolean);
 
-        const lines = formatted.split("\n").filter(Boolean);
+        if (lines.length === 0) {
+          return (
+            <div key={i} className="mb-5">
+              <p
+                className="text-[rgb(var(--text))] mb-2"
+                style={{
+                  fontSize: `${fontSize}px`,
+                  whiteSpace: "pre-wrap",
+                  lineHeight: "1.75rem",
+                }}
+              >
+                &nbsp;
+              </p>
+            </div>
+          );
+        }
 
         return (
           <div key={i} className="mb-5">
             {lines.map((line, j) => {
+              const trimmedLine = line.trim();
+              if (!trimmedLine) return null;
+
               const isTitle =
-                /^\d+\.\s|^Security Note|^Role-Based Permission/i.test(line);
+                /^\d+\.\s|^Security Note|^Role-Based Permission/i.test(trimmedLine);
               const isCode =
                 /^\s*(const|let|enum|export|function|router\.|req\.|res\.|jwt\.|mongoose|type\s)/.test(
-                  line
+                  trimmedLine
                 );
 
               if (isTitle) {
@@ -46,7 +104,7 @@ export default function ReaderContent({
                     className="font-semibold text-lg text-[rgb(var(--text))] mt-4 mb-2"
                     style={{ fontSize: `${fontSize + 2}px` }}
                   >
-                    {line}
+                    {trimmedLine}
                   </h2>
                 );
               }
@@ -61,7 +119,7 @@ export default function ReaderContent({
                       fontSize: `${fontSize - 2}px`,
                     }}
                   >
-                    {line}
+                    {trimmedLine}
                   </pre>
                 );
               }
@@ -74,9 +132,10 @@ export default function ReaderContent({
                     fontSize: `${fontSize}px`,
                     whiteSpace: "pre-wrap",
                     lineHeight: "1.75rem",
+                    textAlign: "justify",
                   }}
                 >
-                  {line}
+                  {trimmedLine}
                 </p>
               );
             })}

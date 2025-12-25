@@ -2,7 +2,6 @@ import type { MouseEventHandler } from "react";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-
 type Location = {
   bookId: string;
   chapterId: string;
@@ -52,6 +51,18 @@ type ReaderState = {
 
   fontSize: number;
   setFontSize: (size: number) => void;
+
+  language: "kh" | "eng" | "ch";
+  setLanguage: (lang: "kh" | "eng" | "ch") => void;
+};
+
+// Migration function for version 3 to 4
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const migrateV3toV4 = (persistedState: any) => {
+  return {
+    ...persistedState,
+    language: "eng" // Default language for migrated state
+  };
 };
 
 export const useReaderStore = create<ReaderState>()(
@@ -150,13 +161,7 @@ export const useReaderStore = create<ReaderState>()(
                   scrollTop: nextLoc.scrollTop,
                   updatedAt: nextLoc.updatedAt,
                 }
-              : {
-                  bookId,
-                  chapterId,
-                  page,
-                  scrollTop: nextLoc.scrollTop,
-                  updatedAt: nextLoc.updatedAt,
-                },
+              : s.currentPosition,
           };
         }),
 
@@ -223,18 +228,36 @@ export const useReaderStore = create<ReaderState>()(
         }),
       fontSize: 16,
       setFontSize: (n: number) => set({ fontSize: n }),
+      
+      language: "eng",
+      setLanguage: (lang: "kh" | "eng" | "ch") => set({ language: lang }),
     }),
     {
       name: "reader-progress",
-      version: 3,
+      version: 4,
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => {
+        // eslint-disable-next-line
         const { isOpenSideBar, toggleOpenSideBar, ...rest } = state;
         return rest;
       },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      migrate: (persistedState: any, version: number) => {
+        console.log('Migrating from version', version, 'to version 4');
+        
+        // If version is 3, migrate to version 4
+        if (version === 3) {
+          return migrateV3toV4(persistedState);
+        }
+        
+        // For any other version or fresh state, return as is
+        return persistedState || {};
+      },
       merge: (persisted, current) => {
         const {
+          // eslint-disable-next-line
           isOpenSideBar: _ignore1,
+          // eslint-disable-next-line
           toggleOpenSideBar: _ignore2,
           ...rest
         } = (persisted ?? {}) as Partial<ReaderState>;
