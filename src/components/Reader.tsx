@@ -243,10 +243,11 @@ export default function Reader({
             console.log(`Found ${contents.length} contents`);
             
             setChapterContents(contents);
-            
-            if (contents.length === 0) {
-              setError("This chapter has no content available");
-            }
+             
+            // Delete // Fix error refresh 
+            // if (contents.length === 0) {
+            //   setError("This chapter has no content available");
+            // }
           } else {
             setError("Chapter not found");
             setChapterContents([]);
@@ -503,8 +504,8 @@ export default function Reader({
     console.log("Chapter title for language", language, ":", title);
     return title;
   };
-
-  if (error) {
+  //  if (error) Change to // Fix error refresh 
+  if (error && !isLoadingContents && !isRefetching) {
     return (
       <section className="flex h-screen flex-col overflow-hidden bg-[rgb(var(--card))] relative">
         <header className="sticky top-0 z-20 backdrop-blur border-b border-slate-200 px-3 py-3 sm:px-6">

@@ -98,3 +98,6 @@ select::-webkit-scrollbar-thumb {
 select::-webkit-scrollbar-thumb:hover {
   background: #ff1a1a;
 }
+article p {
+  text-indent: 2em;
+}

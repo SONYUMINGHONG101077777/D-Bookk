@@ -51,97 +51,23 @@ export default function ReaderContent({
   };
 
   return (
-    <article
-      className="mx-auto max-w-3xl text-[1.05rem] sm:text-lg leading-relaxed whitespace-pre-line"
-      style={{
-        wordBreak: "break-word",
-        overflowWrap: "anywhere",
-      }}
-    >
-      {content.map((segment, i) => {
-        console.log(`Segment ${i} length:`, segment.length);
-        
-        // Parse HTML content to plain text
-        const plainText = parseHTMLContent(segment);
-        
-        // Split into lines
-        const lines = plainText.split('\n').filter(Boolean);
 
-        if (lines.length === 0) {
-          return (
-            <div key={i} className="mb-5">
-              <p
-                className="text-[rgb(var(--text))] mb-2"
-                style={{
-                  fontSize: `${fontSize}px`,
-                  whiteSpace: "pre-wrap",
-                  lineHeight: "1.75rem",
-                }}
-              >
-                &nbsp;
-              </p>
-            </div>
-          );
-        }
+    // No Convet Html to text and Image and There is a starting line
+      <article className="mx-auto max-w-4xl prose prose-img:max-w-full prose-img:h-auto max-w-none"style={{
+         fontSize: `${fontSize}px`,
+         wordBreak: "break-word",
+         textIndent: "2rem", // បន្ថែម indentation សម្រាប់ paragraph
+         }}
+      >
 
-        return (
-          <div key={i} className="mb-5">
-            {lines.map((line, j) => {
-              const trimmedLine = line.trim();
-              if (!trimmedLine) return null;
-
-              const isTitle =
-                /^\d+\.\s|^Security Note|^Role-Based Permission/i.test(trimmedLine);
-              const isCode =
-                /^\s*(const|let|enum|export|function|router\.|req\.|res\.|jwt\.|mongoose|type\s)/.test(
-                  trimmedLine
-                );
-
-              if (isTitle) {
-                return (
-                  <h2
-                    key={j}
-                    className="font-semibold text-lg text-[rgb(var(--text))] mt-4 mb-2"
-                    style={{ fontSize: `${fontSize + 2}px` }}
-                  >
-                    {trimmedLine}
-                  </h2>
-                );
-              }
-
-              if (isCode) {
-                return (
-                  <pre
-                    key={j}
-                    className="bg-slate-800/10 font-mono text-sm px-3 py-2 rounded mb-2 overflow-x-auto"
-                    style={{
-                      whiteSpace: "pre-wrap",
-                      fontSize: `${fontSize - 2}px`,
-                    }}
-                  >
-                    {trimmedLine}
-                  </pre>
-                );
-              }
-
-              return (
-                <p
-                  key={j}
-                  className="text-[rgb(var(--text))] mb-2"
-                  style={{
-                    fontSize: `${fontSize}px`,
-                    whiteSpace: "pre-wrap",
-                    lineHeight: "1.75rem",
-                    textAlign: "justify",
-                  }}
-                >
-                  {trimmedLine}
-                </p>
-              );
-            })}
-          </div>
-        );
-      })}
+        {content.map((html, index) => (
+       <div key={index} 
+         dangerouslySetInnerHTML={{
+         __html: html.replace(
+         /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,"" ), }}
+       />
+      ))}
     </article>
+
   );
 }

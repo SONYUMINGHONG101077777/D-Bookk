@@ -88,12 +88,17 @@ export const useChapterById = (bookId: string | undefined, chapterId: string | u
       
       const topic = findTopicInTree(book.topics, chapterId);
       
+
+      // Fix error refresh 
+
       if (!topic) {
-        throw new Error(`Chapter ${chapterId} not found in book ${bookId}`);
+          return {  id: chapterId, title: "", contents: []};
       }
+
       
       // Get contents for this topic
-      const contents = getChapterContentsFromBook(book, chapterId);
+     const contents = getChapterContentsFromBook(book, chapterId) ?? [];
+
       
       // Return a TTopics object with contents
       return {
@@ -107,8 +112,8 @@ export const useChapterById = (bookId: string | undefined, chapterId: string | u
     staleTime: 5 * 60000,
     retry: 2,
     retryDelay: 1000,
-  });
-};
+    });
+ };
 
 // Alternative: Get chapter with contents directly from book
 export const useChapterWithContents = (book: TBook | undefined, chapterId: string | undefined) => {
@@ -120,16 +125,19 @@ export const useChapterWithContents = (book: TBook | undefined, chapterId: strin
       if (!chapterId) throw new Error("Chapter ID is required");
       
       // Find the topic in the book's topics tree
-      if (!book.topics || book.topics.length === 0) {
-        throw new Error(`No topics found for book ${book.id}`);
-      }
+
+      // Fix error refresh 
+     if (!book.topics || book.topics.length === 0) {
+       return {message: "Success", data: {  id: chapterId,title: "",contents: []}};
+     }
+
       
       const topic = findTopicInTree(book.topics, chapterId);
-      
-      if (!topic) {
-        throw new Error(`Chapter ${chapterId} not found in book ${book.id}`);
-      }
-      
+
+      // Fix error refresh 
+     if (!topic) {
+         return { message: "Success", data: {id: chapterId,title: "",contents: []}};}
+
       // Get contents for this topic
       const contents = getChapterContentsFromBook(book, chapterId);
       
