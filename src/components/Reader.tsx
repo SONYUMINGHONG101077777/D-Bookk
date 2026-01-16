@@ -3,10 +3,15 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useReaderStore } from "../store/readerStore";
-import { ChevronLeft, ChevronRight, RefreshCcw } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  RefreshCcw,
+  VideoIcon,
+} from "lucide-react";
 import { toKhmerNumber } from "../utils/toKhmerNumber";
 import type { TBook, TTopics, TContents } from "../lib/api";
-import { getChapterContentsFromBook } from "../lib/api"; // Import the correct function
+import { getChapterContentsFromBook } from "../lib/api";
 import cover from "/book-cover.jpg";
 import LoadingModal from "./shared/LoadingModal";
 import ReaderContent from "./ReaderContent";
@@ -17,6 +22,7 @@ type Props = {
   onOpenToc?: () => void;
   refetch: () => void;
   isRefetching: boolean;
+  onOpenVideo?: () => void; // Add this prop
 };
 
 // Helper function to find topic in tree
@@ -36,29 +42,6 @@ const findTopicInTree = (
     }
   }
   return undefined;
-};
-
-// Helper function to find topic with contents in tree
-// eslint-disable-next-line
-const findTopicWithContents = (
-  topics: TTopics[],
-  targetId: string
-): { topic?: TTopics; contents: TContents[] } => {
-  for (const topic of topics) {
-    if (topic.id.toString() === targetId) {
-      return {
-        topic,
-        contents: Array.isArray(topic.contents) ? topic.contents : [],
-      };
-    }
-    if (topic.children && topic.children.length > 0) {
-      const result = findTopicWithContents(topic.children, targetId);
-      if (result.topic || result.contents.length > 0) {
-        return result;
-      }
-    }
-  }
-  return { contents: [] };
 };
 
 const CHARS_PER_PAGE = 3500;
@@ -135,7 +118,7 @@ export default function Reader({
   chapterId,
   onOpenToc,
   refetch,
-  isRefetching,
+  isRefetching, // Add this to destructuring
 }: Props) {
   console.log("Reader Component - Book:", book);
   console.log("Reader Component - Chapter ID:", chapterId);
@@ -213,7 +196,13 @@ export default function Reader({
     [navigate, location.search, chapterId]
   );
 
-  // Fetch contents when chapter changes - UPDATED VERSION
+  // Fixed: Handle video navigation with fallback
+const handleVideoClick = useCallback(() => {
+  console.log("Navigating to video page");
+  navigate("/video");
+}, [navigate]);
+
+  // Fetch contents when chapter changes
   useEffect(() => {
     const fetchContents = () => {
       if (!chapterId) {
@@ -231,23 +220,18 @@ export default function Reader({
       try {
         if (book?.topics) {
           console.log("Getting contents from book data");
-          
+
           // Find the chapter in the book data
           const chapter = findTopicInTree(book.topics, chapterId);
-          
+
           if (chapter) {
             setFetchedChapter(chapter);
-            
+
             // Get contents using the helper function
             const contents = getChapterContentsFromBook(book, chapterId);
             console.log(`Found ${contents.length} contents`);
-            
+
             setChapterContents(contents);
-             
-            // Delete // Fix error refresh 
-            // if (contents.length === 0) {
-            //   setError("This chapter has no content available");
-            // }
           } else {
             setError("Chapter not found");
             setChapterContents([]);
@@ -422,15 +406,20 @@ export default function Reader({
     };
   }, [book?.id, chapter, saveLocation]);
 
+  // Later in your component:
   const totalPages = Math.max(1, pages.length);
   const pageSafe = Math.min(pageIdx, totalPages - 1);
   const currentPageContent = pages[pageSafe] || [];
+
+  const displayChapter = fetchedChapter || chapter;
 
   console.log("Reader state:", {
     totalPages,
     pageSafe,
     currentPageContentLength: currentPageContent.length,
     hasContents: chapterContents.length > 0,
+    chapterContents: chapterContents.length,
+    displayChapter: !!displayChapter,
   });
 
   const clampPageNumber = useCallback(
@@ -448,9 +437,6 @@ export default function Reader({
     setIsEditing(false);
     updateUrl(idx);
   };
-
-  // Get the actual chapter to display (fetched or from book)
-  const displayChapter = fetchedChapter || chapter;
 
   // Get title based on language
   const getBookTitle = () => {
@@ -504,7 +490,7 @@ export default function Reader({
     console.log("Chapter title for language", language, ":", title);
     return title;
   };
-  //  if (error) Change to // Fix error refresh 
+
   if (error && !isLoadingContents && !isRefetching) {
     return (
       <section className="flex h-screen flex-col overflow-hidden bg-[rgb(var(--card))] relative">
@@ -576,6 +562,16 @@ export default function Reader({
             </h1>
           </div>
           <span className="flex gap-2">
+            {/* Fixed Video Button */}
+            <button
+              onClick={handleVideoClick}
+              className="p-1 hover:bg-accent rounded"
+              title="Watch Video"
+              aria-label="Go to Video page"
+            >
+              <VideoIcon size={17} className="text" />
+            </button>
+            
             <button
               onClick={() => {
                 console.log("Refreshing...");

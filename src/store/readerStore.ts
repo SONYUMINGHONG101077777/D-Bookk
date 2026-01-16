@@ -3,6 +3,9 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
 type Location = {
+  position: any;
+  currentTime: any;
+  progress: any;
   bookId: string;
   chapterId: string;
   scrollTop: number;
@@ -19,6 +22,7 @@ type CurrentPosition = {
 };
 
 type ReaderState = {
+  saveProgress: any;
   currentBookId: string | null;
   currentChapterId: string | null;
   setProgressPercent?: (progress: number) => void;
@@ -61,7 +65,7 @@ type ReaderState = {
 const migrateV3toV4 = (persistedState: any) => {
   return {
     ...persistedState,
-    language: "eng" // Default language for migrated state
+    language: "eng", // Default language for migrated state
   };
 };
 
@@ -228,7 +232,7 @@ export const useReaderStore = create<ReaderState>()(
         }),
       fontSize: 16,
       setFontSize: (n: number) => set({ fontSize: n }),
-      
+
       language: "eng",
       setLanguage: (lang: "kh" | "eng" | "ch") => set({ language: lang }),
     }),
@@ -243,13 +247,13 @@ export const useReaderStore = create<ReaderState>()(
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       migrate: (persistedState: any, version: number) => {
-        console.log('Migrating from version', version, 'to version 4');
-        
+        console.log("Migrating from version", version, "to version 4");
+
         // If version is 3, migrate to version 4
         if (version === 3) {
           return migrateV3toV4(persistedState);
         }
-        
+
         // For any other version or fresh state, return as is
         return persistedState || {};
       },

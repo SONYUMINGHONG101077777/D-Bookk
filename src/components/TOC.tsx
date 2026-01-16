@@ -83,7 +83,7 @@ const buildTopicTree = (topics: TTopics[]) => {
         parent.children.push(node);
       } else {
         console.warn(`Parent ${topic.parent_id} not found for topic ${topic.id}, treating as root`);
-        roots.push(node); // Orphan node, treat as root
+        roots.push(node);
       }
     }
   });
@@ -112,7 +112,7 @@ export default function TOC({
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
 
   // Use language from store instead of local state
-  const currentLanguage: Language = language as Language || "eng";
+  const currentLanguage: Language = (language as Language) || "eng";
   const t = translations[currentLanguage];
 
   // Initialize with expanded sections based on the screenshot structure
@@ -207,14 +207,12 @@ export default function TOC({
     return topics.map((topic) => {
       const children = topic.children || [];
       const hasChildren = children.length > 0;
-      const hasContents = topic.contents && topic.contents.length > 0;
       const isExpanded = expandedSections.has(topic.id);
       const isCurrent = String(topic.id) === currentChapterId;
 
       console.log(`Topic ${topic.id}:`, {
         title_en: topic.title_en,
         hasChildren,
-        hasContents,
         isExpanded,
         isCurrent
       });
@@ -241,11 +239,10 @@ export default function TOC({
             }`}
             style={{ paddingLeft: `${level * 20 + 12}px` }}
             onClick={() => {
-              console.log(`Clicked topic ${topic.id}`, { hasChildren, hasContents });
+              console.log(`Clicked topic ${topic.id}`, { hasChildren });
               if (hasChildren) {
                 toggleSection(topic.id);
-              } else if (hasContents || !hasChildren) {
-                // Allow clicking even if no contents - it might be fetched dynamically
+              } else {
                 console.log(`Opening chapter ${topic.id}`);
                 onOpenChapter(String(topic.id));
               }

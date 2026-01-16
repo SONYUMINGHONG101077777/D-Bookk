@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchBookData, getChapterContentsFromBook, type TBook, type TTopics } from "./api";
+import { fetchBookData, getChapterContentsFromBook, type TBook, type TTopics, type TContents } from "./api";
 
 // Directly fetch the book from the PALM-01 endpoint
 export const useBook = (bookId: string | undefined) => {
@@ -69,11 +69,26 @@ const findTopicInTree = (topics: TTopics[], targetId: string): TTopics | undefin
   return undefined;
 };
 
+interface ChapterResponse {
+  message: string;
+  data: {
+    id: number | string;
+    title?: string;
+    title_en?: string;
+    title_kh?: string;
+    title_ch?: string;
+    contents: TContents[];
+    
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [key: string]: any;
+  };
+}
+
 export const useChapterById = (bookId: string | undefined, chapterId: string | undefined) => {
-  return useQuery({
+  return useQuery<ChapterResponse, Error>({
     queryKey: ["chapter", bookId, chapterId],
     enabled: !!bookId && !!chapterId,
-    queryFn: async () => {
+    queryFn: async (): Promise<ChapterResponse> => {
       if (!bookId) throw new Error("Book ID is required");
       if (!chapterId) throw new Error("Chapter ID is required");
       
@@ -83,22 +98,31 @@ export const useChapterById = (bookId: string | undefined, chapterId: string | u
       
       // Find the topic in the book's topics tree
       if (!book.topics || book.topics.length === 0) {
-        throw new Error(`No topics found for book ${bookId}`);
+        return {
+          message: "No topics found",
+          data: {
+            id: chapterId,
+            title: "",
+            contents: []
+          }
+        };
       }
       
       const topic = findTopicInTree(book.topics, chapterId);
       
-
-      // Fix error refresh 
-
       if (!topic) {
-          return {  id: chapterId, title: "", contents: []};
+        return {
+          message: "Topic not found",
+          data: {
+            id: chapterId,
+            title: "",
+            contents: []
+          }
+        };
       }
-
       
       // Get contents for this topic
-     const contents = getChapterContentsFromBook(book, chapterId) ?? [];
-
+      const contents = getChapterContentsFromBook(book, chapterId) ?? [];
       
       // Return a TTopics object with contents
       return {
@@ -112,42 +136,55 @@ export const useChapterById = (bookId: string | undefined, chapterId: string | u
     staleTime: 5 * 60000,
     retry: 2,
     retryDelay: 1000,
-    });
- };
+  });
+};
 
 // Alternative: Get chapter with contents directly from book
 export const useChapterWithContents = (book: TBook | undefined, chapterId: string | undefined) => {
   return useQuery({
     queryKey: ["chapter-contents", book?.id, chapterId],
     enabled: !!book && !!chapterId,
-    queryFn: () => {
+    queryFn: (): ChapterResponse => {
       if (!book) throw new Error("Book is required");
       if (!chapterId) throw new Error("Chapter ID is required");
       
-      // Find the topic in the book's topics tree
-
-      // Fix error refresh 
-     if (!book.topics || book.topics.length === 0) {
-       return {message: "Success", data: {  id: chapterId,title: "",contents: []}};
-     }
-
+      if (!book.topics || book.topics.length === 0) {
+        return {
+          message: "Success",
+          data: {
+            id: chapterId,
+            title: "",
+            contents: []
+          }
+        };
+      }
       
       const topic = findTopicInTree(book.topics, chapterId);
-
-      // Fix error refresh 
-     if (!topic) {
-         return { message: "Success", data: {id: chapterId,title: "",contents: []}};}
-
+      
+      if (!topic) {
+        return {
+          message: "Success",
+          data: {
+            id: chapterId,
+            title: "",
+            contents: []
+          }
+        };
+      }
+      
       // Get contents for this topic
       const contents = getChapterContentsFromBook(book, chapterId);
       
       // Return a TTopics object with contents
       return {
-        ...topic,
-        contents: contents
+        message: "Success",
+        data: {
+          ...topic,
+          contents: contents
+        }
       };
     },
     staleTime: 5 * 60000,
-    retry: false, // No retry needed since we're using local data
+    retry: false,
   });
 };

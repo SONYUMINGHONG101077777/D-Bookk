@@ -1,13 +1,17 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useParams, useNavigate } from "react-router-dom";
 import { useBookById, useFirstChapterId } from "./lib/queries";
 import { useReaderStore } from "./store/readerStore";
 import TOC from "./components/TOC";
 import Reader from "./components/Reader";
 
 export default function App() {
+  const params = useParams();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const bookId = searchParams.get("book_id") || "64"; // Default to your book ID
+  
+  // Get bookId from URL params (e.g., /reader/64)
+  const bookId = params.bookId || searchParams.get("book_id") || "64";
   const chapterId = searchParams.get("chapter_id") || "";
   
   const [isTocOpen, setIsTocOpen] = useState(true);
@@ -37,9 +41,9 @@ export default function App() {
   // Auto-select first chapter if no chapter is selected
   useEffect(() => {
     if (!chapterId && firstChapterData && bookData?.data) {
-      const params = new URLSearchParams(searchParams);
-      params.set("chapter_id", firstChapterData);
-      window.history.replaceState({}, "", `?${params.toString()}`);
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set("chapter_id", firstChapterData);
+      window.history.replaceState({}, "", `?${newParams.toString()}`);
     }
   }, [chapterId, firstChapterData, bookData, searchParams]);
 
@@ -109,9 +113,9 @@ export default function App() {
             book={book}
             currentChapterId={chapterId}
             onOpenChapter={(id) => {
-              const params = new URLSearchParams(searchParams);
-              params.set("chapter_id", id);
-              window.history.pushState({}, "", `?${params.toString()}`);
+              const newParams = new URLSearchParams(searchParams);
+              newParams.set("chapter_id", id);
+              navigate(`/reader/${bookId}?${newParams.toString()}`);
             }}
             onClose={() => setIsTocOpen(false)}
           />
@@ -127,9 +131,9 @@ export default function App() {
               book={book}
               currentChapterId={chapterId}
               onOpenChapter={(id) => {
-                const params = new URLSearchParams(searchParams);
-                params.set("chapter_id", id);
-                window.history.pushState({}, "", `?${params.toString()}`);
+                const newParams = new URLSearchParams(searchParams);
+                newParams.set("chapter_id", id);
+                navigate(`/reader/${bookId}?${newParams.toString()}`);
                 setIsTocOpen(false);
               }}
               onClose={() => setIsTocOpen(false)}
@@ -138,7 +142,7 @@ export default function App() {
         </div>
       )}
 
-      {/* Reader */}
+      {/* Main Content Area */}
       <div className="flex-1">
         <Reader
           book={book}

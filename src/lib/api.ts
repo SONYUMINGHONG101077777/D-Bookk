@@ -6,6 +6,7 @@ const BASE = import.meta.env.VITE_BASE_URL;
 // };
 
 export type TContents = {
+  thumbnail: string;
   id: number;
   topic_id: number;
   content_en: string;
@@ -13,7 +14,13 @@ export type TContents = {
   content_ch: string;
   created_at: string;
   updated_at: string;
-}
+  video_en?: string;
+  video_kh?: string;
+  video_ch?: string;
+  title_en?: string;
+  title_kh?: string;
+  title_ch?: string;
+};
 
 export type TTopics = {
   id: number;
@@ -26,7 +33,7 @@ export type TTopics = {
   updated_at: string;
   contents?: TContents[];
   children?: TTopics[];
-}
+};
 
 export type TBook = {
   id: number;
@@ -38,39 +45,40 @@ export type TBook = {
   created_at: string;
   updated_at: string;
   topics?: TTopics[];
-}
+};
 
 // Fetch book data - this includes topics AND contents
 export const fetchBookData = async (bookId: string) => {
   try {
     console.log("Fetching book data for ID:", bookId);
-    
+
     // Fetch from the PALM-01 endpoint
     const res = await fetch(`${BASE}/get-help_center/PALM-01`);
-    
+
     if (!res.ok) {
       throw new Error(`Failed to fetch book data. Status: ${res.status}`);
     }
-    
+
     const data = await res.json();
     console.log("Book data response:", data);
-    
+
     // Find the specific book
     let bookData: TBook | null = null;
-    
+
     if (data.data && Array.isArray(data.data)) {
-      bookData = data.data.find((b: TBook) => b.id.toString() === bookId) || null;
+      bookData =
+        data.data.find((b: TBook) => b.id.toString() === bookId) || null;
     } else if (data.data && data.data.id?.toString() === bookId) {
       bookData = data.data;
     }
-    
+
     if (!bookData) {
       throw new Error(`Book ${bookId} not found`);
     }
-    
+
     return {
       message: "Success",
-      data: bookData
+      data: bookData,
     };
   } catch (error) {
     console.error("Error fetching book:", error);
@@ -85,14 +93,17 @@ export const getChapterContentsFromBook = (
   chapterId: string
 ): TContents[] => {
   console.log("Getting contents for chapter", chapterId, "from book:", book);
-  
+
   if (!book.topics || book.topics.length === 0) {
     console.log("No topics in book");
     return [];
   }
-  
+
   // Helper function to recursively search topics
-  const findTopicInTree = (topics: TTopics[], targetId: string): TTopics | undefined => {
+  const findTopicInTree = (
+    topics: TTopics[],
+    targetId: string
+  ): TTopics | undefined => {
     for (const topic of topics) {
       if (topic.id.toString() === targetId) {
         return topic;
@@ -104,15 +115,15 @@ export const getChapterContentsFromBook = (
     }
     return undefined;
   };
-  
+
   const topic = findTopicInTree(book.topics, chapterId);
   console.log("Found topic:", topic);
-  
+
   if (topic && topic.contents) {
     console.log("Returning contents:", topic.contents);
     return topic.contents;
   }
-  
+
   console.log("No contents found for chapter", chapterId);
   return [];
 };

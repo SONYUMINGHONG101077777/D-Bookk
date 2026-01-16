@@ -29,26 +29,26 @@ export default function ReaderContent({
   }
 
   // Parse HTML content safely
-  const parseHTMLContent = (html: string) => {
-    try {
-      // Remove script tags for security
-      const sanitized = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+  // const parseHTMLContent = (html: string) => {
+  //   try {
+  //     // Remove script tags for security
+  //     const sanitized = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
       
-      // Create a temporary div to parse HTML
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = sanitized;
+  //     // Create a temporary div to parse HTML
+  //     const tempDiv = document.createElement('div');
+  //     tempDiv.innerHTML = sanitized;
       
-      // Get text content while preserving some formatting
-      const textContent = tempDiv.textContent || tempDiv.innerText || '';
+  //     // Get text content while preserving some formatting
+  //     const textContent = tempDiv.textContent || tempDiv.innerText || '';
       
-      // Replace multiple spaces with single space
-      return textContent.replace(/\s+/g, ' ').trim();
-    } catch (error) {
-      console.error("Error parsing HTML content:", error);
-      // Return raw text if parsing fails
-      return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-    }
-  };
+  //     // Replace multiple spaces with single space
+  //     return textContent.replace(/\s+/g, ' ').trim();
+  //   } catch (error) {
+  //     console.error("Error parsing HTML content:", error);
+  //     // Return raw text if parsing fails
+  //     return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  //   }
+  // };
 
   return (
 
