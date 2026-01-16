@@ -16,13 +16,14 @@ registerSW({
 })
 
 createRoot(document.getElementById("root")!).render(
-  <BrowserRouter>
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <App />
-      </ThemeProvider>
-    </QueryClientProvider>
-  </BrowserRouter>
+<BrowserRouter> 
+  <QueryClientProvider client={queryClient}>
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
+  </QueryClientProvider>
+</BrowserRouter>
+
 );
 
 // import { createRoot } from "react-dom/client";
