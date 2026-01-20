@@ -66,7 +66,7 @@ body,
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
-/* Custom arrow icon */
+
 .custom-select {
   appearance: none;
   -webkit-appearance: none;
@@ -78,13 +78,12 @@ body,
   background-size: 14px;
 }
 
-/* Style dropdown list area (the red area you circled) */
+
 select {
-  background-color: #1f1f1f; /* Dropdown box's background */
-  color: white;              /* Text color */
+  background-color: #1f1f1f; 
+  color: white;             
 }
 
-/* Scrollbar inside dropdown */
 select::-webkit-scrollbar {
   width: 6px;
 }
@@ -92,7 +91,7 @@ select::-webkit-scrollbar-track {
   background: #3a3a3a;
 }
 select::-webkit-scrollbar-thumb {
-  background: #ff4d4d;   /* red scrollbar */
+  background: #ff4d4d;  
   border-radius: 4px;
 }
 select::-webkit-scrollbar-thumb:hover {

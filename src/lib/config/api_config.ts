@@ -1,4 +1,3 @@
-
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://erp.palmtechnology.net';
 const DEFAULT_COMPANY_ID = import.meta.env.VITE_DEFAULT_COMPANY_ID || 'PALM-01';
 
@@ -25,3 +24,4 @@ export const CONFIG = {
   IS_DEV: import.meta.env.DEV,
   IS_PROD: import.meta.env.PROD,
 };
+

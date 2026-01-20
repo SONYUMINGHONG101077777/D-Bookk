@@ -22,7 +22,6 @@ type Props = {
   onOpenToc?: () => void;
   refetch: () => void;
   isRefetching: boolean;
-  onOpenVideo?: () => void; // Add this prop
 };
 
 // Helper function to find topic in tree
@@ -118,7 +117,7 @@ export default function Reader({
   chapterId,
   onOpenToc,
   refetch,
-  isRefetching, // Add this to destructuring
+  isRefetching,
 }: Props) {
   console.log("Reader Component - Book:", book);
   console.log("Reader Component - Chapter ID:", chapterId);
@@ -187,20 +186,21 @@ export default function Reader({
   const restoredOnce = useRef(false);
 
   const updateUrl = useCallback(
-    (page: number) => {
-      const params = new URLSearchParams(location.search);
-      params.set("chapter_id", chapterId);
-      params.set("page", String(page + 1));
-      navigate({ search: params.toString() }, { replace: true });
-    },
-    [navigate, location.search, chapterId]
-  );
+  (page: number) => {
+    const newParams = new URLSearchParams(location.search);
+    newParams.set("chapter_id", chapterId);
+    newParams.set("page", String(page + 1));
+    
+    navigate({ search: newParams.toString() }, { replace: true });
+  },
+  [navigate, location.search, chapterId]
+);
 
-  // Fixed: Handle video navigation with fallback
-const handleVideoClick = useCallback(() => {
-  console.log("Navigating to video page");
-  navigate("/video");
-}, [navigate]);
+  // Fixed video navigation
+  const handleVideoClick = useCallback(() => {
+    console.log("Navigating to video page");
+    navigate("/video");
+  }, [navigate]);
 
   // Fetch contents when chapter changes
   useEffect(() => {
@@ -406,7 +406,6 @@ const handleVideoClick = useCallback(() => {
     };
   }, [book?.id, chapter, saveLocation]);
 
-  // Later in your component:
   const totalPages = Math.max(1, pages.length);
   const pageSafe = Math.min(pageIdx, totalPages - 1);
   const currentPageContent = pages[pageSafe] || [];
@@ -562,7 +561,7 @@ const handleVideoClick = useCallback(() => {
             </h1>
           </div>
           <span className="flex gap-2">
-            {/* Fixed Video Button */}
+            {/* Video Button */}
             <button
               onClick={handleVideoClick}
               className="p-1 hover:bg-accent rounded"

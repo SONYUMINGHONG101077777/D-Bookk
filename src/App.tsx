@@ -43,9 +43,11 @@ export default function App() {
     if (!chapterId && firstChapterData && bookData?.data) {
       const newParams = new URLSearchParams(searchParams);
       newParams.set("chapter_id", firstChapterData);
-      window.history.replaceState({}, "", `?${newParams.toString()}`);
+      // Remove page parameter when changing chapter
+      newParams.delete("page");
+      navigate(`?${newParams.toString()}`, { replace: true });
     }
-  }, [chapterId, firstChapterData, bookData, searchParams]);
+  }, [chapterId, firstChapterData, bookData, searchParams, navigate]);
 
   // Show loading state
   if (isLoadingBook || isLoadingFirstChapter) {
@@ -115,7 +117,9 @@ export default function App() {
             onOpenChapter={(id) => {
               const newParams = new URLSearchParams(searchParams);
               newParams.set("chapter_id", id);
-              navigate(`/reader/${bookId}?${newParams.toString()}`);
+              // Remove page parameter when changing chapter
+              newParams.delete("page");
+              navigate(`?${newParams.toString()}`);
             }}
             onClose={() => setIsTocOpen(false)}
           />
@@ -133,7 +137,8 @@ export default function App() {
               onOpenChapter={(id) => {
                 const newParams = new URLSearchParams(searchParams);
                 newParams.set("chapter_id", id);
-                navigate(`/reader/${bookId}?${newParams.toString()}`);
+                newParams.delete("page");
+                navigate(`?${newParams.toString()}`);
                 setIsTocOpen(false);
               }}
               onClose={() => setIsTocOpen(false)}
