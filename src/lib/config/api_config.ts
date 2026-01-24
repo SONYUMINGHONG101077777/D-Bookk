@@ -2,15 +2,13 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://erp.palmtechn
 const DEFAULT_COMPANY_ID = import.meta.env.VITE_DEFAULT_COMPANY_ID || 'PALM-01';
 
 export const API_ENDPOINTS = {
-  // Book/Help Center endpoints
+  
   HELP_CENTER: `${API_BASE_URL}/api/get-help_center`,
   HELP_CENTER_WITH_COMPANY: `${API_BASE_URL}/api/get-help_center/${DEFAULT_COMPANY_ID}`,
   
-  // Video Center endpoints
   VIDEO_CENTER: `${API_BASE_URL}/api/get-help_center_video`,
   VIDEO_CENTER_WITH_COMPANY: `${API_BASE_URL}/api/get-help_center_video/${DEFAULT_COMPANY_ID}`,
   
-  // Helper function to get endpoint with custom company ID
   getHelpCenter: (companyId?: string) => 
     `${API_BASE_URL}/api/get-help_center/${companyId || DEFAULT_COMPANY_ID}`,
     

@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import VideoTOC from "./VideoTOC";
 import VideoContent from "./VideoContent";
+import { videoApi } from "../lib/video_api";
 
 export default function Video() {
   const [searchParams] = useSearchParams();
@@ -13,7 +14,6 @@ export default function Video() {
   const handleOpenVideo = useCallback((id: string) => {
     const newParams = new URLSearchParams(searchParams);
     newParams.set("video_id", id);
-    // Update URL without full page reload
     window.history.pushState(null, "", `?${newParams.toString()}`);
     setIsSidebarOpen(false);
   }, [searchParams]);
@@ -22,12 +22,17 @@ export default function Video() {
     console.log("Refreshing video data...");
     setIsRefetching(true);
     
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    setIsRefetching(false);
-    // Trigger a re-render of components
-    window.dispatchEvent(new Event('locationchange'));
+    try {
+      const isConnected = await videoApi.testConnection();
+      console.log("API connection test:", isConnected ? "Success" : "Failed");
+      
+      await new Promise(resolve => setTimeout(resolve, 500));
+    } catch (error) {
+      console.error("Refetch error:", error);
+    } finally {
+      setIsRefetching(false);
+      window.dispatchEvent(new Event('locationchange'));
+    }
   }, []);
 
   const toggleSidebar = useCallback(() => {

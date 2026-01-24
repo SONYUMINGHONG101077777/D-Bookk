@@ -47,12 +47,10 @@ export type TBook = {
   topics?: TTopics[];
 };
 
-// Fetch book data - this includes topics AND contents
 export const fetchBookData = async (bookId: string) => {
   try {
     console.log("Fetching book data for ID:", bookId);
 
-    // Fetch from the PALM-01 endpoint
     const res = await fetch(`${BASE}/get-help_center/PALM-01`);
 
     if (!res.ok) {
@@ -62,7 +60,6 @@ export const fetchBookData = async (bookId: string) => {
     const data = await res.json();
     console.log("Book data response:", data);
 
-    // Find the specific book
     let bookData: TBook | null = null;
 
     if (data.data && Array.isArray(data.data)) {
@@ -87,7 +84,6 @@ export const fetchBookData = async (bookId: string) => {
   }
 };
 
-// Get chapter contents from the already-loaded book data
 export const getChapterContentsFromBook = (
   book: TBook,
   chapterId: string
@@ -99,7 +95,6 @@ export const getChapterContentsFromBook = (
     return [];
   }
 
-  // Helper function to recursively search topics
   const findTopicInTree = (
     topics: TTopics[],
     targetId: string

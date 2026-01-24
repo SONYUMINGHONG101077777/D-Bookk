@@ -14,153 +14,14 @@ import {
 } from "lucide-react";
 import { toKhmerNumber } from "../utils/toKhmerNumber";
 import LoadingModal from "./shared/LoadingModal";
+import { videoApi, type VideoItem } from "../lib/video_api";
+import { videoUtils } from "../lib/video_queries";
 
 type Props = {
   videoId: string;
   onOpenVideoToc?: () => void;
   refetch: () => void;
   isRefetching: boolean;
-};
-
-// Mock video data - same as in VideoTOC.tsx
-type VideoTopic = {
-  id: number;
-  parent_id: number | null;
-  name_en: string;
-  name_kh: string;
-  name_ch: string;
-  video_url?: string;
-  video_thumb?: string;
-  video_title_en?: string;
-  video_title_kh?: string;
-  video_title_ch?: string;
-  description_en?: string;
-  description_kh?: string;
-  description_ch?: string;
-  created_at?: string;
-  status?: number;
-  company_id?: string;
-  children?: VideoTopic[];
-};
-
-const mockVideos: VideoTopic[] = [
-  {
-    id: 1,
-    parent_id: null,
-    name_en: "Getting Started",
-    name_kh: "ចាប់ផ្តើម",
-    name_ch: "开始",
-    company_id: "PALM Tech",
-    status: 1,
-    created_at: "2024-01-01",
-  },
-  {
-    id: 2,
-    parent_id: 1,
-    name_en: "Introduction to PALM Tech",
-    name_kh: "សេចក្តីណែនាំអំពី PALM Tech",
-    name_ch: "PALM Tech 介绍",
-    video_url: "https://youtu.be/388BBynKooI?si=atvBmVSOIrHxYq4C",
-    video_thumb: "https://img.youtube.com/vi/388BBynKooI/maxresdefault.jpg",
-    video_title_en: "Introduction to PALM Tech Platform",
-    video_title_kh: "សេចក្តីណែនាំអំពីវេទិកា PALM Tech",
-    video_title_ch: "PALM Tech 平台介绍",
-    description_en:
-      "Learn the basics of PALM Tech platform and how to get started with our features.",
-    description_kh:
-      "ស្វែងយល់ពីគ្រឹះនៃវេទិកា PALM Tech និងរបៀបចាប់ផ្តើមជាមួយលក្ខណៈពិសេសរបស់យើង។",
-    description_ch: "了解 PALM Tech 平台的基础知识以及如何开始使用我们的功能。",
-    company_id: "PALM Tech",
-    status: 1,
-    created_at: "2024-01-15",
-  },
-  {
-    id: 3,
-    parent_id: 1,
-    name_en: "Basic Features",
-    name_kh: "លក្ខណៈពិសេសមូលដ្ឋាន",
-    name_ch: "基本功能",
-    video_url: "https://youtu.be/388BBynKooI?si=atvBmVSOIrHxYq4C",
-    video_thumb: "https://img.youtube.com/vi/388BBynKooI/maxresdefault.jpg",
-    video_title_en: "Exploring Basic Features",
-    video_title_kh: "ការស្វែងយល់ពីលក្ខណៈពិសេសមូលដ្ឋាន",
-    video_title_ch: "探索基本功能",
-    description_en:
-      "Discover the basic features that make PALM Tech easy to use for beginners.",
-    description_kh:
-      "ស្វែងរកលក្ខណៈពិសេសមូលដ្ឋានដែលធ្វើឱ្យ PALM Tech ងាយស្រួលប្រើសម្រាប់អ្នកចាប់ផ្តើម។",
-    description_ch: "发现让初学者轻松使用 PALM Tech 的基本功能。",
-    company_id: "PALM Tech",
-    status: 1,
-    created_at: "2024-01-20",
-  },
-  {
-    id: 4,
-    parent_id: null,
-    name_en: "Advanced Tutorials",
-    name_kh: "ការបង្រៀនកម្រិតខ្ពស់",
-    name_ch: "高级教程",
-    company_id: "PALM Tech",
-    status: 1,
-    created_at: "2024-02-01",
-  },
-  {
-    id: 5,
-    parent_id: 4,
-    name_en: "Advanced Settings",
-    name_kh: "ការកំណត់កម្រិតខ្ពស់",
-    name_ch: "高级设置",
-    video_url: "https://youtu.be/388BBynKooI?si=atvBmVSOIrHxYq4C",
-    video_thumb: "https://img.youtube.com/vi/388BBynKooI/maxresdefault.jpg",
-    video_title_en: "Mastering Advanced Settings",
-    video_title_kh: "ការបង្រៀនការកំណត់កម្រិតខ្ពស់",
-    video_title_ch: "掌握高级设置",
-    description_en:
-      "Learn how to configure advanced settings for optimal performance.",
-    description_kh:
-      "ស្វែងយល់ពីរបៀបកំណត់រចនាសម្ព័ន្ធការកំណត់កម្រិតខ្ពស់សម្រាប់ប្រសិទ្ធភាពល្អបំផុត។",
-    description_ch: "了解如何配置高级设置以获得最佳性能。",
-    company_id: "PALM Tech",
-    status: 1,
-    created_at: "2024-02-10",
-  },
-  {
-    id: 6,
-    parent_id: 4,
-    name_en: "Troubleshooting",
-    name_kh: "ការដោះស្រាយបញ្ហា",
-    name_ch: "故障排除",
-    video_url: "https://youtu.be/388BBynKooI?si=atvBmVSOIrHxYq4C",
-    video_thumb: "https://img.youtube.com/vi/388BBynKooI/maxresdefault.jpg",
-    video_title_en: "Common Issues and Solutions",
-    video_title_kh: "បញ្ហាទូទៅនិងដំណោះស្រាយ",
-    video_title_ch: "常见问题和解决方案",
-    description_en:
-      "Learn how to troubleshoot common issues and find quick solutions.",
-    description_kh: "ស្វែងយល់ពីរបៀបដោះស្រាយបញ្ហាទូទៅ និងស្វែងរកដំណោះស្រាយរហ័ស។",
-    description_ch: "了解如何排除常见问题并找到快速解决方案。",
-    company_id: "PALM Tech",
-    status: 1,
-    created_at: "2024-02-15",
-  },
-];
-
-// Helper to find video by ID
-const findVideoById = (id: string): VideoTopic | undefined => {
-  const numId = parseInt(id, 10);
-  return mockVideos.find((video) => video.id === numId);
-};
-
-// Helper to get all videos that have video_url (actual videos)
-const getVideoItems = (): VideoTopic[] => {
-  return mockVideos.filter((video) => video.video_url);
-};
-
-// Helper to find video index
-const findVideoIndex = (id: string): number => {
-  const videoItems = getVideoItems();
-  const numId = parseInt(id, 10);
-  return videoItems.findIndex((video) => video.id === numId);
 };
 
 export default function VideoContent({
@@ -177,12 +38,33 @@ export default function VideoContent({
   const setCurrent = useReaderStore((s) => s.setCurrent);
   const language = useReaderStore((s) => s.language);
 
-  const [videoData, setVideoData] = useState<VideoTopic | null>(null);
+  const [videoData, setVideoData] = useState<VideoItem | null>(null);
+  const [allVideos, setAllVideos] = useState<VideoItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Use language from store
   const currentLanguage = language || "en";
+
+  // Fetch all videos on mount
+  const fetchAllVideos = useCallback(async () => {
+    console.log("Fetching all videos...");
+    try {
+      const response = await videoApi.getVideos({ status: 1 });
+      if (response.success && response.data) {
+        setAllVideos(response.data);
+        console.log(`Loaded ${response.data.length} videos`);
+      } else {
+        console.error("Failed to load videos:", response.error);
+      }
+    } catch (err) {
+      console.error("Error fetching all videos:", err);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchAllVideos();
+  }, [fetchAllVideos]);
 
   // Fetch video data
   const fetchVideo = useCallback(async () => {
@@ -202,20 +84,16 @@ export default function VideoContent({
         throw new Error("Invalid video ID");
       }
 
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 300));
-
-      const video = findVideoById(videoId);
-      if (video) {
-        setVideoData(video);
-        setCurrent("video", video.id.toString());
+      const response = await videoApi.getVideoById(id);
+      if (response.success && response.data) {
+        setVideoData(response.data);
+        setCurrent("video", response.data.id.toString());
       } else {
-        setError("Video not found");
-        setVideoData(null);
+        throw new Error(response.error || "Video not found");
       }
     } catch (err) {
       console.error("Error fetching video:", err);
-      setError("Failed to load video. Please try again.");
+      setError(err instanceof Error ? err.message : "Failed to load video. Please try again.");
       setVideoData(null);
     } finally {
       setIsLoading(false);
@@ -230,6 +108,17 @@ export default function VideoContent({
     navigate("/");
   }, [navigate]);
 
+  const getVideoItems = useCallback((): VideoItem[] => {
+    // Filter videos that have a video_url
+    return allVideos.filter((video) => video.video_url && video.video_url.trim() !== "");
+  }, [allVideos]);
+
+  const findVideoIndex = useCallback((id: string): number => {
+    const videoItems = getVideoItems();
+    const numId = parseInt(id, 10);
+    return videoItems.findIndex((video) => video.id === numId);
+  }, [getVideoItems]);
+
   const navigateToNextVideo = useCallback(() => {
     if (!videoId) return;
 
@@ -240,7 +129,7 @@ export default function VideoContent({
       const nextVideo = videoItems[currentIndex + 1];
       navigate(`/video?video_id=${nextVideo.id}`);
     }
-  }, [videoId, navigate]);
+  }, [videoId, navigate, getVideoItems, findVideoIndex]);
 
   const navigateToPrevVideo = useCallback(() => {
     if (!videoId) return;
@@ -252,59 +141,33 @@ export default function VideoContent({
       const prevVideo = videoItems[currentIndex - 1];
       navigate(`/video?video_id=${prevVideo.id}`);
     }
-  }, [videoId, navigate]);
+  }, [videoId, navigate, getVideoItems, findVideoIndex]);
 
   const getVideoTitle = useCallback(() => {
     if (!videoData) {
       return "Loading Video...";
     }
 
-    switch (currentLanguage) {
-      case "kh":
-        return (
-          videoData.name_kh || videoData.name_en || `Video ${videoData.id}`
-        );
-      case "ch":
-        return (
-          videoData.name_ch || videoData.name_en || `Video ${videoData.id}`
-        );
-      default:
-        return videoData.name_en || `Video ${videoData.id}`;
-    }
+    return videoUtils.getLocalizedName(videoData, currentLanguage);
   }, [videoData, currentLanguage]);
 
   const getCategoryName = useCallback(() => {
-    if (!videoData) {
+    if (!videoData || !videoData.parent_id) {
       return "Videos";
     }
 
-    if (videoData.parent_id) {
-      const parent = mockVideos.find((v) => v.id === videoData.parent_id);
-      if (parent) {
-        switch (currentLanguage) {
-          case "kh":
-            return parent.name_kh || parent.name_en || "Videos";
-          case "ch":
-            return parent.name_ch || parent.name_en || "Videos";
-          default:
-            return parent.name_en || "Videos";
-        }
-      }
+    const parent = allVideos.find((v) => v.id === videoData.parent_id);
+    if (parent) {
+      return videoUtils.getLocalizedName(parent, currentLanguage);
     }
 
     return "Videos";
-  }, [videoData, currentLanguage]);
+  }, [videoData, allVideos, currentLanguage]);
 
   // Extract YouTube ID for embedding
   const youtubeId = useMemo(() => {
     if (!videoData?.video_url) return null;
-
-    // Extract YouTube ID from URL
-    const url = videoData.video_url;
-    const regex =
-      /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/;
-    const match = url.match(regex);
-    return match ? match[1] : null;
+    return videoUtils.extractYouTubeId(videoData.video_url);
   }, [videoData]);
 
   // Get thumbnail URL
@@ -313,7 +176,7 @@ export default function VideoContent({
       return videoData.video_thumb;
     }
     if (youtubeId) {
-      return `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`;
+      return videoUtils.getYouTubeThumbnail(youtubeId);
     }
     return null;
   }, [videoData, youtubeId]);
@@ -321,6 +184,15 @@ export default function VideoContent({
   const videoItems = getVideoItems();
   const currentIndex = videoId ? findVideoIndex(videoId) : -1;
   const totalVideos = videoItems.length;
+
+  // Get related videos (same parent category)
+  const relatedVideos = useMemo(() => {
+    if (!videoData || !videoData.parent_id) return [];
+
+    return videoItems.filter(
+      (video) => video.parent_id === videoData.parent_id && video.id !== videoData.id
+    ).slice(0, 3);
+  }, [videoData, videoItems]);
 
   // Loading state
   if ((isLoading || isRefetching) && !videoData) {
@@ -547,34 +419,11 @@ export default function VideoContent({
             <div className="bg-card border rounded-xl p-6 mb-8 shadow-sm">
               <h2 className="text-2xl font-bold mb-4">{getVideoTitle()}</h2>
 
-              {videoData &&
-                (videoData.video_title_en ||
-                  videoData.video_title_kh ||
-                  videoData.video_title_ch) && (
-                  <p className="text-muted-foreground mb-6 text-lg leading-relaxed">
-                    {currentLanguage === "kh"
-                      ? videoData.video_title_kh || videoData.video_title_en
-                      : currentLanguage === "ch"
-                        ? videoData.video_title_ch || videoData.video_title_en
-                        : videoData.video_title_en}
-                  </p>
-                )}
-
-              {videoData &&
-                (videoData.description_en ||
-                  videoData.description_kh ||
-                  videoData.description_ch) && (
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold mb-2">Description</h3>
-                    <p className="text-muted-foreground">
-                      {currentLanguage === "kh"
-                        ? videoData.description_kh || videoData.description_en
-                        : currentLanguage === "ch"
-                          ? videoData.description_ch || videoData.description_en
-                          : videoData.description_en}
-                    </p>
-                  </div>
-                )}
+              {videoData && (
+                <p className="text-muted-foreground mb-6 text-lg leading-relaxed">
+                  {videoUtils.getLocalizedVideoTitle(videoData, currentLanguage)}
+                </p>
+              )}
 
               {thumbnailUrl && (
                 <div className="mb-6">
@@ -624,88 +473,51 @@ export default function VideoContent({
             </div>
 
             {/* Related Videos - Show other videos in same category */}
-            {videoData && videoData.parent_id && (
+            {relatedVideos.length > 0 && (
               <div className="mt-8">
                 <h3 className="text-xl font-bold mb-6 pb-2 border-b">
                   Related Videos
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {videoItems
-                    .filter(
-                      (video) =>
-                        video.parent_id === videoData.parent_id &&
-                        video.id !== videoData.id,
-                    )
-                    .slice(0, 3)
-                    .map((relatedVideo) => {
-                      const relatedYoutubeId = relatedVideo.video_url?.match(
-                        /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\\s]{11})/,
-                      )?.[1];
-                      const relatedThumbnail =
-                        relatedVideo.video_thumb ||
-                        (relatedYoutubeId
-                          ? `https://img.youtube.com/vi/${relatedYoutubeId}/mqdefault.jpg`
-                          : null);
+                  {relatedVideos.map((relatedVideo) => {
+                    const relatedYoutubeId = videoUtils.extractYouTubeId(relatedVideo.video_url);
+                    const relatedThumbnail = relatedVideo.video_thumb || 
+                      (relatedYoutubeId ? videoUtils.getYouTubeThumbnail(relatedYoutubeId, 'medium') : null);
 
-                      const getRelatedName = () => {
-                        switch (currentLanguage) {
-                          case "kh":
-                            return (
-                              relatedVideo.name_kh ||
-                              relatedVideo.name_en ||
-                              `Video ${relatedVideo.id}`
-                            );
-                          case "ch":
-                            return (
-                              relatedVideo.name_ch ||
-                              relatedVideo.name_en ||
-                              `Video ${relatedVideo.id}`
-                            );
-                          default:
-                            return (
-                              relatedVideo.name_en || `Video ${relatedVideo.id}`
-                            );
+                    const getRelatedName = () => {
+                      return videoUtils.getLocalizedName(relatedVideo, currentLanguage);
+                    };
+
+                    return (
+                      <div
+                        key={relatedVideo.id}
+                        className="group bg-card border rounded-xl overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                        onClick={() =>
+                          navigate(`/video?video_id=${relatedVideo.id}`)
                         }
-                      };
-
-                      return (
-                        <div
-                          key={relatedVideo.id}
-                          className="group bg-card border rounded-xl overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-                          onClick={() =>
-                            navigate(`/video?video_id=${relatedVideo.id}`)
-                          }
-                        >
-                          {relatedThumbnail && (
-                            <div className="aspect-video overflow-hidden bg-gray-100">
-                              <img
-                                src={relatedThumbnail}
-                                alt={getRelatedName()}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                loading="lazy"
-                              />
-                              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
-                            </div>
-                          )}
-                          <div className="p-4">
-                            <h4 className="font-semibold text-base truncate mb-2">
-                              {getRelatedName()}
-                            </h4>
-                            {relatedVideo.video_title_en && (
-                              <p className="text-xs text-muted-foreground line-clamp-2">
-                                {currentLanguage === "kh"
-                                  ? relatedVideo.video_title_kh ||
-                                    relatedVideo.video_title_en
-                                  : currentLanguage === "ch"
-                                    ? relatedVideo.video_title_ch ||
-                                      relatedVideo.video_title_en
-                                    : relatedVideo.video_title_en}
-                              </p>
-                            )}
+                      >
+                        {relatedThumbnail && (
+                          <div className="aspect-video overflow-hidden bg-gray-100">
+                            <img
+                              src={relatedThumbnail}
+                              alt={getRelatedName()}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              loading="lazy"
+                            />
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
                           </div>
+                        )}
+                        <div className="p-4">
+                          <h4 className="font-semibold text-base truncate mb-2">
+                            {getRelatedName()}
+                          </h4>
+                          <p className="text-xs text-muted-foreground line-clamp-2">
+                            {videoUtils.getLocalizedVideoTitle(relatedVideo, currentLanguage)}
+                          </p>
                         </div>
-                      );
-                    })}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}

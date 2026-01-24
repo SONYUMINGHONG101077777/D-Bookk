@@ -4,6 +4,8 @@ import { Search, ChevronRight, ChevronDown, Home, Video as VideoIcon } from "luc
 import { useReaderStore } from "../store/readerStore";
 import { toKhmerNumber } from "../utils/toKhmerNumber";
 import LoadingModal from "./shared/LoadingModal";
+import { videoApi, type VideoItem } from "../lib/video_api";
+import { videoUtils, type VideoTreeItem } from "../lib/video_queries";
 
 type Props = {
   currentVideoId: string | null;
@@ -12,18 +14,6 @@ type Props = {
 };
 
 type Language = "kh" | "eng" | "ch";
-
-// Mock video data structure similar to TTopics
-type VideoTopic = {
-  id: number;
-  parent_id: number | null;
-  name_en: string;
-  name_kh: string;
-  name_ch: string;
-  video_url?: string;
-  video_thumb?: string;
-  children?: VideoTopic[];
-};
 
 const languageOptions: { value: Language; label: string; flag: string }[] = [
   { value: "kh", label: "ខ្មែរ", flag: "/flags/kh.png" },
@@ -67,92 +57,6 @@ const translations = {
   },
 };
 
-// Mock video data - replace with your actual API call
-const mockVideos: VideoTopic[] = [
-  {
-    id: 1,
-    parent_id: null,
-    name_en: "Getting Started",
-    name_kh: "ចាប់ផ្តើម",
-    name_ch: "开始",
-  },
-  {
-    id: 2,
-    parent_id: 1,
-    name_en: "Introduction to PALM Tech",
-    name_kh: "សេចក្តីណែនាំអំពី PALM Tech",
-    name_ch: "PALM Tech 介绍",
-    video_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    video_thumb: "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
-  },
-  {
-    id: 3,
-    parent_id: 1,
-    name_en: "Basic Features",
-    name_kh: "លក្ខណៈពិសេសមូលដ្ឋាន",
-    name_ch: "基本功能",
-    video_url: "https://www.youtube.com/watch?v=9bZkp7q19f0",
-    video_thumb: "https://img.youtube.com/vi/9bZkp7q19f0/maxresdefault.jpg",
-  },
-  {
-    id: 4,
-    parent_id: null,
-    name_en: "Advanced Tutorials",
-    name_kh: "ការបង្រៀនកម្រិតខ្ពស់",
-    name_ch: "高级教程",
-  },
-  {
-    id: 5,
-    parent_id: 4,
-    name_en: "Advanced Settings",
-    name_kh: "ការកំណត់កម្រិតខ្ពស់",
-    name_ch: "高级设置",
-    video_url: "https://www.youtube.com/watch?v=JGwWNGJdvx8",
-    video_thumb: "https://img.youtube.com/vi/JGwWNGJdvx8/maxresdefault.jpg",
-  },
-  {
-    id: 6,
-    parent_id: 4,
-    name_en: "Troubleshooting",
-    name_kh: "ការដោះស្រាយបញ្ហា",
-    name_ch: "故障排除",
-    video_url: "https://www.youtube.com/watch?v=2Vv-BfVoq4g",
-    video_thumb: "https://img.youtube.com/vi/2Vv-BfVoq4g/maxresdefault.jpg",
-  },
-];
-
-// Helper to build video hierarchy
-const buildVideoTree = (videos: VideoTopic[]): VideoTopic[] => {
-  if (!videos || videos.length === 0) return [];
-
-  const map = new Map<number, VideoTopic>();
-  const roots: VideoTopic[] = [];
-
-  // Initialize all videos with children array
-  videos.forEach((video) => {
-    map.set(video.id, { ...video, children: [] });
-  });
-
-  // Build the tree based on parent_id relationships
-  videos.forEach((video) => {
-    const node = map.get(video.id);
-    if (!node) return;
-
-    if (video.parent_id === null) {
-      roots.push(node);
-    } else {
-      const parent = map.get(video.parent_id);
-      if (parent) {
-        parent.children!.push(node);
-      } else {
-        roots.push(node);
-      }
-    }
-  });
-
-  return roots;
-};
-
 export default function VideoTOC({
   currentVideoId,
   onOpenVideo,
@@ -165,29 +69,42 @@ export default function VideoTOC({
   const language = useReaderStore((s) => s.language);
 
   const [query, setQuery] = useState("");
-  const [expandedSections, setExpandedSections] = useState<Set<number>>(
-    new Set(),
-  );
+  const [expandedSections, setExpandedSections] = useState<Set<number>>(new Set());
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [videos, setVideos] = useState<VideoItem[]>([]);
+  const [videoTree, setVideoTree] = useState<VideoTreeItem[]>([]);
 
   const currentLanguage: Language = (language as Language) || "eng";
   const t = translations[currentLanguage];
 
-  // Initialize with expanded sections
+  // Fetch videos from API
   useEffect(() => {
-    console.log("Initializing expanded sections for videos");
-    
-    if (mockVideos.length === 0) return;
+    const fetchVideos = async () => {
+      try {
+        setIsLoading(true);
+        const response = await videoApi.getVideos({ status: 1 });
+        if (response.success && response.data) {
+          setVideos(response.data);
+          console.log(`Loaded ${response.data.length} videos from API`);
+          
+          const tree = videoUtils.buildTree(response.data);
+          setVideoTree(tree);
+          
+          if (tree.length > 0) {
+            setExpandedSections(new Set([tree[0].id]));
+          }
+        } else {
+          console.error("Failed to load videos:", response.error);
+        }
+      } catch (error) {
+        console.error("Error fetching videos:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    const tree = buildVideoTree(mockVideos);
-    const firstRoot = tree[0];
-    
-    if (firstRoot) {
-      console.log("Expanding first root video category:", firstRoot.id);
-      setExpandedSections(new Set([firstRoot.id]));
-    }
+    fetchVideos();
   }, []);
 
   const onBackHome = () => {
@@ -195,10 +112,6 @@ export default function VideoTOC({
     setCurrent("", "");
     window.location.href = "/";
   };
-
-  const videoTree = useMemo(() => {
-    return buildVideoTree(mockVideos);
-  }, []);
 
   const filteredTree = useMemo(() => {
     console.log("Filtering videos with query:", query);
@@ -208,15 +121,26 @@ export default function VideoTOC({
     }
 
     const searchLower = query.toLowerCase();
-
-    const filtered = mockVideos.filter((video) => {
-      const name = getVideoName(video);
-      return name.toLowerCase().includes(searchLower);
+    
+    // Filter videos based on search query
+    const filteredVideos = videos.filter((video) => {
+      const nameEn = video.name_en?.toLowerCase() || '';
+      const nameKh = video.name_kh?.toLowerCase() || '';
+      const nameCh = video.name_ch?.toLowerCase() || '';
+      const titleEn = video.video_title_en?.toLowerCase() || '';
+      const titleKh = video.video_title_kh?.toLowerCase() || '';
+      const titleCh = video.video_title_ch?.toLowerCase() || '';
+      
+      return nameEn.includes(searchLower) || 
+             nameKh.includes(searchLower) || 
+             nameCh.includes(searchLower) ||
+             titleEn.includes(searchLower) ||
+             titleKh.includes(searchLower) ||
+             titleCh.includes(searchLower);
     });
 
-    return buildVideoTree(filtered);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, videoTree]);
+    return videoUtils.buildTree(filteredVideos);
+  }, [query, videoTree, videos]);
 
   const toggleSection = useCallback((videoId: number) => {
     setExpandedSections((prev) => {
@@ -230,41 +154,30 @@ export default function VideoTOC({
     });
   }, []);
 
-  const hasChildren = useCallback((video: VideoTopic): boolean => {
+  const hasChildren = useCallback((video: VideoTreeItem): boolean => {
     return Array.isArray(video.children) && video.children.length > 0;
   }, []);
 
-  const isVideoItem = useCallback((video: VideoTopic): boolean => {
+  const isVideoItem = useCallback((video: VideoTreeItem): boolean => {
     return !!video.video_url && video.video_url.trim() !== "";
   }, []);
 
-  const getVideoName = useCallback((video: VideoTopic): string => {
-    switch (currentLanguage) {
-      case "kh":
-        return video.name_kh || video.name_en || `Video ${video.id}`;
-      case "ch":
-        return video.name_ch || video.name_en || `Video ${video.id}`;
-      default:
-        return video.name_en || `Video ${video.id}`;
-    }
+  const getVideoName = useCallback((video: VideoTreeItem): string => {
+    return videoUtils.getLocalizedName(video, currentLanguage === 'eng' ? 'en' : currentLanguage);
   }, [currentLanguage]);
 
   const renderVideoTree = useCallback(
-    (videos: VideoTopic[], level = 0): JSX.Element[] => {
-      if (!videos || videos.length === 0) {
+    (treeItems: VideoTreeItem[], level = 0): JSX.Element[] => {
+      if (!treeItems || treeItems.length === 0) {
         return [];
       }
 
-      return videos.map((video) => {
+      return treeItems.map((video) => {
         const children = video.children || [];
         const itemHasChildren = hasChildren(video);
         const isExpanded = expandedSections.has(video.id);
         const isCurrent = String(video.id) === currentVideoId;
         const itemIsVideo = isVideoItem(video);
-
-        const getName = () => {
-          return getVideoName(video);
-        };
 
         const handleClick = () => {
           if (itemHasChildren) {
@@ -298,7 +211,7 @@ export default function VideoTOC({
               {!itemHasChildren && <span className="w-4"></span>}
 
               <span className="flex-1 truncate text-sm font-medium">
-                {getName()}
+                {getVideoName(video)}
                 {itemIsVideo && (
                   <span className="ml-2">
                     <VideoIcon size={12} className="text-muted-foreground" />
@@ -314,17 +227,7 @@ export default function VideoTOC({
         );
       });
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      expandedSections,
-      currentVideoId,
-      currentLanguage,
-      hasChildren,
-      isVideoItem,
-      toggleSection,
-      onOpenVideo,
-      getVideoName,
-    ],
+    [expandedSections, currentVideoId, hasChildren, isVideoItem, toggleSection, onOpenVideo, getVideoName]
   );
 
   const handleLanguageChange = (value: Language) => {
@@ -332,6 +235,11 @@ export default function VideoTOC({
     useReaderStore.getState().setLanguage(value);
     setIsLanguageDropdownOpen(false);
   };
+
+  // Count videos with video_url
+  const videoCount = useMemo(() => {
+    return videos.filter(v => v.video_url && v.video_url.trim() !== "").length;
+  }, [videos]);
 
   if (isLoading) {
     return (
@@ -348,13 +256,6 @@ export default function VideoTOC({
       {/* Mobile header */}
       <div className="mb-4 flex items-center justify-between md:hidden pb-4 border-b">
         <div className="flex items-center gap-2">
-          {/* <button
-            onClick={onBackHome}
-            className="p-2 hover:bg-accent rounded-md"
-            title={t.backToHome}
-          >
-            <Home size={20} />
-          </button> */}
           <span className="flex flex-col">
             <h2 className="text-xl font-bold truncate text-foreground">
               {t.location}
@@ -372,13 +273,6 @@ export default function VideoTOC({
       {/* Desktop header */}
       <div className="hidden md:block mb-6">
         <div className="flex items-center gap-3 mb-2">
-          {/* <button
-            onClick={onBackHome}
-            className="p-2 hover:bg-accent rounded-md"
-            title={t.backToHome}
-          >
-            <Home size={20} />
-          </button> */}
           <div>
             <h1 className="text-2xl font-bold text-foreground">{t.location}</h1>
             <h2 className="text-lg font-semibold text-muted-foreground">
@@ -412,9 +306,7 @@ export default function VideoTOC({
             aria-label="Change language"
           >
             <img
-              src={
-                languageOptions.find((l) => l.value === currentLanguage)?.flag
-              }
+              src={languageOptions.find((l) => l.value === currentLanguage)?.flag}
               alt={currentLanguage}
               className="w-5 h-4 object-contain"
             />
@@ -451,7 +343,7 @@ export default function VideoTOC({
 
       {/* Total videos */}
       <h3 className="my-2 text-base font-semibold text-foreground truncate">
-        {t.totalVideos(mockVideos.filter(v => v.video_url).length)}
+        {t.totalVideos(videoCount)}
       </h3>
 
       {/* Video Tree */}
@@ -467,7 +359,6 @@ export default function VideoTOC({
         </div>
       </div>
 
-      {/* Back to home button */}
       <div className="mt-6 pt-4 border-t text-center">
         <button
           onClick={onBackHome}

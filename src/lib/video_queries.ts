@@ -1,6 +1,6 @@
-import { videoApi, type VideoItem, type VideoTreeItem, type ApiResponse } from './video_api';
+import { videoApi, type VideoItem, type ApiResponse } from './video_api';
 
-export type { VideoItem, VideoTreeItem, ApiResponse };
+export type { VideoItem, ApiResponse };
 
 export interface VideoQueryParams {
   language?: string;
@@ -24,9 +24,7 @@ export const videoQueryKeys = {
     [...videoQueryKeys.all, 'company', companyId, filters] as const,
 };
 
-
 export const videoQueries = {
-
   getVideos: (params?: VideoQueryParams) => ({
     queryKey: videoQueryKeys.list(params),
     queryFn: () => videoApi.getVideos(params),
@@ -52,19 +50,29 @@ export const videoQueries = {
   }),
 };
 
-export const videoUtils = {
+export interface VideoTreeItem extends VideoItem {
+  children?: VideoTreeItem[];
+  level?: number;
+}
 
+export const videoUtils = {
   buildTree: (items: VideoItem[], parentId: number | null = null): VideoTreeItem[] => {
     if (!items || items.length === 0) return [];
     
     return items
       .filter(item => item.parent_id === parentId)
       .sort((a, b) => a.sort_order - b.sort_order)
-      .map(item => ({
-        ...item,
-        level: parentId === null ? 0 : 0,
-        children: videoUtils.buildTree(items, item.id),
-      }));
+      .map(item => {
+        const children = item.children_recursive && item.children_recursive.length > 0 
+          ? videoUtils.buildTree(item.children_recursive, item.id)
+          : videoUtils.buildTree(items, item.id);
+        
+        return {
+          ...item,
+          level: parentId === null ? 0 : 0,
+          children,
+        };
+      });
   },
 
   flattenTree: (tree: VideoTreeItem[], level: number = 0): VideoItem[] => {
@@ -73,12 +81,12 @@ export const videoUtils = {
     let result: VideoItem[] = [];
     
     tree.forEach(item => {
-      const { ...itemWithoutChildren } = item;
-      const flatItem = { ...itemWithoutChildren, level };
+      const { children, ...itemWithoutChildren } = item;
+      const flatItem = { ...itemWithoutChildren };
       result.push(flatItem);
       
-      if (item.children && item.children.length > 0) {
-        result = result.concat(videoUtils.flattenTree(item.children, level + 1));
+      if (children && children.length > 0) {
+        result = result.concat(videoUtils.flattenTree(children, level + 1));
       }
     });
     
