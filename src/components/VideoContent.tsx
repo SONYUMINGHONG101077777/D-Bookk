@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { useEffect, useMemo, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { useReaderStore } from "../store/readerStore";
 import {
   ChevronLeft,
@@ -14,8 +15,8 @@ import {
 } from "lucide-react";
 import { toKhmerNumber } from "../utils/toKhmerNumber";
 import LoadingModal from "./shared/LoadingModal";
-import { videoApi, type VideoItem } from "../lib/video_api";
-import { videoUtils } from "../lib/video_queries";
+import { videoApi, type VideoItem } from "../lib/api";
+import { videoUtils, videoQueries } from "../lib/video_queries";
 
 type Props = {
   videoId: string;
@@ -38,85 +39,91 @@ export default function VideoContent({
   const setCurrent = useReaderStore((s) => s.setCurrent);
   const language = useReaderStore((s) => s.language);
 
-  const [videoData, setVideoData] = useState<VideoItem | null>(null);
-  const [allVideos, setAllVideos] = useState<VideoItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // Use language from store
   const currentLanguage = language || "en";
 
-  // Fetch all videos on mount
-  const fetchAllVideos = useCallback(async () => {
-    console.log("Fetching all videos...");
-    try {
-      const response = await videoApi.getVideos({ status: 1 });
-      if (response.success && response.data) {
-        setAllVideos(response.data);
-        console.log(`Loaded ${response.data.length} videos`);
-      } else {
-        console.error("Failed to load videos:", response.error);
+  const { 
+    data: allVideosResponse, 
+    isLoading: isLoadingAllVideos,
+    refetch: refetchAllVideos,
+    error: allVideosError 
+  } = useQuery(videoQueries.getVideos({ status: 1 }));
+
+  const { 
+    data: videoDataResponse, 
+    isLoading: isLoadingVideo,
+    error: videoError,
+    refetch: refetchVideo
+  } = useQuery({
+    queryKey: ['video', videoId],
+    queryFn: async () => {
+      if (!videoId) {
+        return { success: false, error: "No video ID provided" };
       }
-    } catch (err) {
-      console.error("Error fetching all videos:", err);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchAllVideos();
-  }, [fetchAllVideos]);
-
-  // Fetch video data
-  const fetchVideo = useCallback(async () => {
-    if (!videoId) {
-      setVideoData(null);
-      setError(null);
-      return;
-    }
-
-    console.log(`Fetching video ${videoId}`);
-    setIsLoading(true);
-    setError(null);
-
-    try {
+      
       const id = parseInt(videoId, 10);
       if (isNaN(id)) {
-        throw new Error("Invalid video ID");
+        return { success: false, error: "Invalid video ID" };
       }
 
+      console.log("Fetching video by ID:", id);
       const response = await videoApi.getVideoById(id);
-      if (response.success && response.data) {
-        setVideoData(response.data);
-        setCurrent("video", response.data.id.toString());
-      } else {
-        throw new Error(response.error || "Video not found");
-      }
-    } catch (err) {
-      console.error("Error fetching video:", err);
-      setError(err instanceof Error ? err.message : "Failed to load video. Please try again.");
-      setVideoData(null);
-    } finally {
-      setIsLoading(false);
+      console.log("Video by ID response:", response);
+      return response;
+    },
+    enabled: !!videoId && !isNaN(parseInt(videoId, 10)),
+  });
+
+  const allVideos = useMemo(() => {
+    if (allVideosResponse?.success) {
+      return allVideosResponse.data || [];
     }
-  }, [videoId, setCurrent]);
+    return [];
+  }, [allVideosResponse]);
+
+  const videoData = useMemo(() => {
+    if (videoDataResponse?.success) {
+      return videoDataResponse.data || null;
+    }
+    return null;
+  }, [videoDataResponse]);
+
+  const error = useMemo(() => {
+    if (videoError) {
+      return (videoError as Error).message;
+    }
+    if (videoDataResponse && !videoDataResponse.success) {
+      return videoDataResponse.error || "Failed to load video";
+    }
+    if (allVideosError) {
+      return "Failed to load video list";
+    }
+    return null;
+  }, [videoError, videoDataResponse, allVideosError]);
 
   useEffect(() => {
-    fetchVideo();
-  }, [fetchVideo]);
+    if (videoData) {
+      setCurrent("video", videoData.id.toString());
+    }
+  }, [videoData, setCurrent]);
 
   const navigateToHome = useCallback(() => {
     navigate("/");
   }, [navigate]);
 
   const getVideoItems = useCallback((): VideoItem[] => {
-    // Filter videos that have a video_url
-    return allVideos.filter((video) => video.video_url && video.video_url.trim() !== "");
+    const videosWithUrl = allVideos.filter((video) => 
+      video.video_url && video.video_url.trim() !== ""
+    );
+    console.log("Videos with URL:", videosWithUrl.length);
+    return videosWithUrl;
   }, [allVideos]);
 
   const findVideoIndex = useCallback((id: string): number => {
     const videoItems = getVideoItems();
     const numId = parseInt(id, 10);
-    return videoItems.findIndex((video) => video.id === numId);
+    const index = videoItems.findIndex((video) => video.id === numId);
+    console.log(`Finding video ${id} in ${videoItems.length} items, index: ${index}`);
+    return index;
   }, [getVideoItems]);
 
   const navigateToNextVideo = useCallback(() => {
@@ -164,13 +171,13 @@ export default function VideoContent({
     return "Videos";
   }, [videoData, allVideos, currentLanguage]);
 
-  // Extract YouTube ID for embedding
   const youtubeId = useMemo(() => {
     if (!videoData?.video_url) return null;
-    return videoUtils.extractYouTubeId(videoData.video_url);
+    const id = videoUtils.extractYouTubeId(videoData.video_url);
+    console.log("Extracted YouTube ID:", id, "from URL:", videoData.video_url);
+    return id;
   }, [videoData]);
 
-  // Get thumbnail URL
   const thumbnailUrl = useMemo(() => {
     if (videoData?.video_thumb) {
       return videoData.video_thumb;
@@ -185,7 +192,8 @@ export default function VideoContent({
   const currentIndex = videoId ? findVideoIndex(videoId) : -1;
   const totalVideos = videoItems.length;
 
-  // Get related videos (same parent category)
+  console.log("Video items count:", totalVideos, "Current index:", currentIndex);
+
   const relatedVideos = useMemo(() => {
     if (!videoData || !videoData.parent_id) return [];
 
@@ -194,7 +202,8 @@ export default function VideoContent({
     ).slice(0, 3);
   }, [videoData, videoItems]);
 
-  // Loading state
+  const isLoading = isLoadingAllVideos || isLoadingVideo;
+
   if ((isLoading || isRefetching) && !videoData) {
     return (
       <section className="flex h-screen flex-col overflow-hidden bg-card">
@@ -224,7 +233,6 @@ export default function VideoContent({
     );
   }
 
-  // Error state
   if (error && !isLoading && !isRefetching) {
     return (
       <section className="flex h-screen flex-col overflow-hidden bg-card">
@@ -254,7 +262,10 @@ export default function VideoContent({
             <p className="text-sm text-muted-foreground mb-4">{error}</p>
             <div className="flex gap-3 justify-center">
               <button
-                onClick={fetchVideo}
+                onClick={() => {
+                  refetchVideo();
+                  refetchAllVideos();
+                }}
                 className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
               >
                 Try Again
@@ -272,7 +283,6 @@ export default function VideoContent({
     );
   }
 
-  // No video selected state
   if ((!videoData || !videoId) && !isLoading && !isRefetching) {
     return (
       <section className="flex h-screen flex-col overflow-hidden bg-card">
@@ -323,8 +333,7 @@ export default function VideoContent({
       </section>
     );
   }
-
-  // Main content when video is selected
+  
   return (
     <section className="flex h-screen flex-col overflow-hidden bg-card">
       <header className="sticky top-0 z-20 border-b bg-background/95 backdrop-blur px-4 py-3 sm:px-6">
@@ -356,13 +365,16 @@ export default function VideoContent({
 
             <button
               onClick={() => {
-                console.log("Refreshing...");
+                console.log("Refreshing all data...");
                 refetch();
+                refetchAllVideos();
+                refetchVideo();
               }}
               className="p-2 hover:bg-accent rounded-md"
               title="Refresh"
+              disabled={isRefetching}
             >
-              <RefreshCcw size={18} />
+              <RefreshCcw size={18} className={isRefetching ? "animate-spin" : ""} />
             </button>
           </span>
         </div>
@@ -419,7 +431,7 @@ export default function VideoContent({
             <div className="bg-card border rounded-xl p-6 mb-8 shadow-sm">
               <h2 className="text-2xl font-bold mb-4">{getVideoTitle()}</h2>
 
-              {videoData && (
+              {videoData && videoData.video_title_en && (
                 <p className="text-muted-foreground mb-6 text-lg leading-relaxed">
                   {videoUtils.getLocalizedVideoTitle(videoData, currentLanguage)}
                 </p>
@@ -496,8 +508,8 @@ export default function VideoContent({
                           navigate(`/video?video_id=${relatedVideo.id}`)
                         }
                       >
-                        {relatedThumbnail && (
-                          <div className="aspect-video overflow-hidden bg-gray-100">
+                        {relatedThumbnail ? (
+                          <div className="aspect-video overflow-hidden bg-gray-100 relative">
                             <img
                               src={relatedThumbnail}
                               alt={getRelatedName()}
@@ -505,6 +517,10 @@ export default function VideoContent({
                               loading="lazy"
                             />
                             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
+                          </div>
+                        ) : (
+                          <div className="aspect-video bg-gray-100 flex items-center justify-center">
+                            <VideoIcon className="w-12 h-12 text-gray-400" />
                           </div>
                         )}
                         <div className="p-4">

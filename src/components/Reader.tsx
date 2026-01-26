@@ -24,7 +24,6 @@ type Props = {
   isRefetching: boolean;
 };
 
-// Helper function to find topic in tree
 const findTopicInTree = (
   topics: TTopics[],
   topicId: string
@@ -146,7 +145,6 @@ export default function Reader({
   const [fetchedChapter, setFetchedChapter] = useState<TTopics | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Find chapter from book topics tree
   const chapter: TTopics | undefined = useMemo(() => {
     console.log("Finding chapter in book topics:", book?.topics, chapterId);
     if (!book?.topics) {
@@ -196,13 +194,11 @@ export default function Reader({
   [navigate, location.search, chapterId]
 );
 
-  // Fixed video navigation
   const handleVideoClick = useCallback(() => {
     console.log("Navigating to video page");
     navigate("/video");
   }, [navigate]);
 
-  // Fetch contents when chapter changes
   useEffect(() => {
     const fetchContents = () => {
       if (!chapterId) {
@@ -221,13 +217,11 @@ export default function Reader({
         if (book?.topics) {
           console.log("Getting contents from book data");
 
-          // Find the chapter in the book data
           const chapter = findTopicInTree(book.topics, chapterId);
 
           if (chapter) {
             setFetchedChapter(chapter);
 
-            // Get contents using the helper function
             const contents = getChapterContentsFromBook(book, chapterId);
             console.log(`Found ${contents.length} contents`);
 
@@ -276,11 +270,9 @@ export default function Reader({
       return;
     }
 
-    // Extract content based on language
     const normalized = chapterContents.flatMap((content: TContents) => {
       let contentText = "";
 
-      // Get content based on current language from store
       switch (language) {
         case "kh":
           contentText = content.content_kh || content.content_en || "";
@@ -299,10 +291,8 @@ export default function Reader({
         }, preview=${contentText.substring(0, 50)}...`
       );
 
-      // Normalize line endings
       const normalizedContent = contentText.replace(/\r\n/g, "\n");
 
-      // Split on double newlines for paragraphs
       return normalizedContent.includes("\n\n")
         ? normalizedContent.split(/\n{2,}/).filter((s) => s.length > 0)
         : [normalizedContent];
@@ -437,7 +427,6 @@ export default function Reader({
     updateUrl(idx);
   };
 
-  // Get title based on language
   const getBookTitle = () => {
     if (!book) {
       console.warn("No book data for title");

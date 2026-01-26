@@ -1,11 +1,11 @@
 import { useSearchParams } from "react-router-dom";
-import { useState, useMemo, useEffect, useCallback, type JSX } from "react";
+import { useState, useMemo, useCallback, type JSX } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Search, ChevronRight, ChevronDown, Home, Video as VideoIcon } from "lucide-react";
 import { useReaderStore } from "../store/readerStore";
 import { toKhmerNumber } from "../utils/toKhmerNumber";
 import LoadingModal from "./shared/LoadingModal";
-import { videoApi, type VideoItem } from "../lib/video_api";
-import { videoUtils, type VideoTreeItem } from "../lib/video_queries";
+import { videoUtils, type VideoTreeItem, videoQueries } from "../lib/video_queries";
 
 type Props = {
   currentVideoId: string | null;
@@ -71,41 +71,27 @@ export default function VideoTOC({
   const [query, setQuery] = useState("");
   const [expandedSections, setExpandedSections] = useState<Set<number>>(new Set());
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [videos, setVideos] = useState<VideoItem[]>([]);
-  const [videoTree, setVideoTree] = useState<VideoTreeItem[]>([]);
 
   const currentLanguage: Language = (language as Language) || "eng";
   const t = translations[currentLanguage];
 
-  // Fetch videos from API
-  useEffect(() => {
-    const fetchVideos = async () => {
-      try {
-        setIsLoading(true);
-        const response = await videoApi.getVideos({ status: 1 });
-        if (response.success && response.data) {
-          setVideos(response.data);
-          console.log(`Loaded ${response.data.length} videos from API`);
-          
-          const tree = videoUtils.buildTree(response.data);
-          setVideoTree(tree);
-          
-          if (tree.length > 0) {
-            setExpandedSections(new Set([tree[0].id]));
-          }
-        } else {
-          console.error("Failed to load videos:", response.error);
-        }
-      } catch (error) {
-        console.error("Error fetching videos:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const { 
+    data: videosResponse, 
+    isLoading,
+    error 
+  } = useQuery(videoQueries.getVideos({ status: 1 }));
 
-    fetchVideos();
-  }, []);
+  const videos = useMemo(() => {
+    if (videosResponse?.success) {
+      return videosResponse.data || [];
+    }
+    return [];
+  }, [videosResponse]);
+
+  const videoTree = useMemo(() => {
+    console.log("Building tree from videos:", videos.length);
+    return videoUtils.buildTree(videos);
+  }, [videos]);
 
   const onBackHome = () => {
     setParams(new URLSearchParams(), { replace: true });
@@ -122,7 +108,6 @@ export default function VideoTOC({
 
     const searchLower = query.toLowerCase();
     
-    // Filter videos based on search query
     const filteredVideos = videos.filter((video) => {
       const nameEn = video.name_en?.toLowerCase() || '';
       const nameKh = video.name_kh?.toLowerCase() || '';
@@ -163,7 +148,8 @@ export default function VideoTOC({
   }, []);
 
   const getVideoName = useCallback((video: VideoTreeItem): string => {
-    return videoUtils.getLocalizedName(video, currentLanguage === 'eng' ? 'en' : currentLanguage);
+    const lang = currentLanguage === 'eng' ? 'en' : currentLanguage;
+    return videoUtils.getLocalizedName(video, lang);
   }, [currentLanguage]);
 
   const renderVideoTree = useCallback(
@@ -236,7 +222,6 @@ export default function VideoTOC({
     setIsLanguageDropdownOpen(false);
   };
 
-  // Count videos with video_url
   const videoCount = useMemo(() => {
     return videos.filter(v => v.video_url && v.video_url.trim() !== "").length;
   }, [videos]);
@@ -246,6 +231,27 @@ export default function VideoTOC({
       <aside className="w-full md:w-80 border-r bg-card p-4 sm:p-6 h-full flex flex-col overflow-hidden">
         <div className="flex-1 flex flex-col items-center justify-center">
           <LoadingModal isLoading={isLoading} />
+          <p className="mt-4 text-sm text-muted-foreground">{t.loadingVideos}</p>
+        </div>
+      </aside>
+    );
+  }
+
+  if (error) {
+    return (
+      <aside className="w-full md:w-80 border-r bg-card p-4 sm:p-6 h-full flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col items-center justify-center text-center p-4">
+          <div className="text-red-500 mb-4">⚠️</div>
+          <h3 className="font-semibold mb-2">Error Loading Videos</h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            {error instanceof Error ? error.message : "Failed to load videos"}
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+          >
+            Retry
+          </button>
         </div>
       </aside>
     );
@@ -351,9 +357,13 @@ export default function VideoTOC({
         <div className="space-y-0.5">
           {filteredTree.length > 0 ? (
             renderVideoTree(filteredTree)
+          ) : videos.length === 0 ? (
+            <div className="px-3 py-8 text-center text-muted-foreground">
+              {t.noVideos}
+            </div>
           ) : (
             <div className="px-3 py-8 text-center text-muted-foreground">
-              {query.trim() ? t.searchNoResults : t.noVideos}
+              {t.searchNoResults}
             </div>
           )}
         </div>

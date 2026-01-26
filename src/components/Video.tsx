@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import VideoTOC from "./VideoTOC";
 import VideoContent from "./VideoContent";
-import { videoApi } from "../lib/video_api";
+import { videoApi } from "../lib/api";
 
 export default function Video() {
   const [searchParams] = useSearchParams();
@@ -31,7 +31,6 @@ export default function Video() {
       console.error("Refetch error:", error);
     } finally {
       setIsRefetching(false);
-      window.dispatchEvent(new Event('locationchange'));
     }
   }, []);
 

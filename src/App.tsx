@@ -1,23 +1,32 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useParams, useNavigate } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useBookById, useFirstChapterId } from "./lib/queries";
 import { useReaderStore } from "./store/readerStore";
 import TOC from "./components/TOC";
 import Reader from "./components/Reader";
 
-export default function App() {
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, 
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+function AppContent() {
   const params = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  
-  // Get bookId from URL params (e.g., /reader/64)
+
   const bookId = params.bookId || searchParams.get("book_id") || "64";
   const chapterId = searchParams.get("chapter_id") || "";
   
   const [isTocOpen, setIsTocOpen] = useState(true);
   const setCurrent = useReaderStore((s) => s.setCurrent);
 
-  // Fetch book data
   const { 
     data: bookData, 
     isLoading: isLoadingBook, 
@@ -25,31 +34,26 @@ export default function App() {
     refetch: refetchBook 
   } = useBookById(bookId);
 
-  // Fetch first chapter ID if no chapter is selected
   const { 
     data: firstChapterData, 
     isLoading: isLoadingFirstChapter 
   } = useFirstChapterId(bookId);
 
-  // Set current book in store when loaded
   useEffect(() => {
     if (bookData?.data) {
       setCurrent(bookData.data.id.toString(), chapterId || null);
     }
   }, [bookData, chapterId, setCurrent]);
 
-  // Auto-select first chapter if no chapter is selected
   useEffect(() => {
     if (!chapterId && firstChapterData && bookData?.data) {
       const newParams = new URLSearchParams(searchParams);
       newParams.set("chapter_id", firstChapterData);
-      // Remove page parameter when changing chapter
       newParams.delete("page");
       navigate(`?${newParams.toString()}`, { replace: true });
     }
   }, [chapterId, firstChapterData, bookData, searchParams, navigate]);
 
-  // Show loading state
   if (isLoadingBook || isLoadingFirstChapter) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -61,7 +65,6 @@ export default function App() {
     );
   }
 
-  // Show error state
   if (bookError) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -86,7 +89,6 @@ export default function App() {
     );
   }
 
-  // Show no data state
   if (!bookData?.data) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -158,5 +160,14 @@ export default function App() {
         />
       </div>
     </div>
+  );
+}
+
+// Main App wrapper with QueryClientProvider
+export default function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AppContent />
+    </QueryClientProvider>
   );
 }
